@@ -4029,7 +4029,8 @@ function renderAccounts(accountsArray) {
         const charGrid = document.createElement('div');
         charGrid.className = 'character-list';
 
-        acc.chars.forEach(name => {
+        const sortedChars = sortCharactersByPriority(acc.chars);  // ✅ 여기서 정렬해줌
+        sortedChars.forEach(name => {
             const wrapper = document.createElement('div');
             wrapper.className = 'result-character-card';
 
@@ -4094,6 +4095,25 @@ const button = document.getElementById("chatButton");
         button.classList.remove("fixed");
       }
     });
+
+// ★★★ 캐릭터 우선순위 리스트 추가 ★★★
+const priorityList = [
+  '수시노', '미카', '수나코', '드히나', '임시노', '쿠로코', '키사키', '아코', '히마리', '뉴요코', '캠하레', '와카모',
+  '운유카', '뉴우카', '이로하', '체리노', '슌', '우이', '코코나', '수로코', '드아루', '뉴츠키', '수즈나', '수우이',
+  '마코토', '드아코', '나기사', '아마리', '온도카', '코하루', '이오리', '히비키', '메리스', '수야코', '수사키',
+  '수즈사', '운마리', '뉴루나', '뉴아루', '수나타'
+];
+
+// ★★★ 계정 데이터 정렬 함수 추가 ★★★
+function sortCharactersByPriority(chars) {
+  const priorityMap = {};
+  priorityList.forEach((name, idx) => {
+    priorityMap[name] = idx;
+  });
+  return chars.slice().sort((a, b) => {
+    return (priorityMap[a] ?? 999) - (priorityMap[b] ?? 999);
+  });
+}
     
 </script>
 
