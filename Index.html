@@ -4012,6 +4012,44 @@ function drawCharacters() {
     });
 }
 
+function renderAccounts(accountsArray) {
+    const resultDiv = document.getElementById('result');
+    resultDiv.innerHTML = '';
+
+    accountsArray.forEach(acc => {
+        const accBox = document.createElement('div');
+        accBox.className = 'account-card';
+
+        accBox.innerHTML = `<div class="account-header">
+            <button class="copy-btn" onclick="copyAccount('${acc.num}')">복사</button>
+            <span class="account-num">${acc.num}</span>
+            <span class="account-price">가격: ${acc.price}만</span>
+        </div>`;
+
+        const charGrid = document.createElement('div');
+        charGrid.className = 'character-list';
+
+        acc.chars.forEach(name => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'result-character-card';
+
+            const img = document.createElement('img');
+            img.src = `/static/images/${name}.png`;
+
+            const nameDiv = document.createElement('div');
+            nameDiv.className = 'character-name';
+            nameDiv.innerText = name;
+
+            wrapper.appendChild(img);
+            wrapper.appendChild(nameDiv);
+            charGrid.appendChild(wrapper);
+        });
+
+        accBox.appendChild(charGrid);
+        resultDiv.appendChild(accBox);
+    });
+}
+
 function searchAccounts() {
     const minPrice = parseFloat(document.getElementById('minPrice').value);
     const maxPrice = parseFloat(document.getElementById('maxPrice').value);
@@ -4036,40 +4074,7 @@ function searchAccounts() {
         }
 
         const limitedAccounts = filteredAccounts.slice(0, 100);
-        renderAccounts(limitedAccounts);
-
-        filteredAccounts.forEach(acc => {
-            const accBox = document.createElement('div');
-            accBox.className = 'account-card';
-
-            accBox.innerHTML = `<div class="account-header">
-                <button class="copy-btn" onclick="copyAccount('${acc.num}')">복사</button>
-                <span class="account-num">${acc.num}</span>
-                <span class="account-price">가격: ${acc.price}만</span>
-            </div>`;
-
-            const charGrid = document.createElement('div');
-            charGrid.className = 'character-list';
-
-            acc.chars.forEach(name => {
-                const wrapper = document.createElement('div');
-                wrapper.className = 'result-character-card';
-
-                const img = document.createElement('img');
-                img.src = `/static/images/${name}.png`;
-
-                const nameDiv = document.createElement('div');
-                nameDiv.className = 'character-name';
-                nameDiv.innerText = name;
-
-                wrapper.appendChild(img);
-                wrapper.appendChild(nameDiv);
-                charGrid.appendChild(wrapper);
-            });
-
-            accBox.appendChild(charGrid);
-            resultDiv.appendChild(accBox);
-        });
+        renderAccounts(limitedAccounts);  // ✅ 이거 하나만!
 
     }, 300);
 }
