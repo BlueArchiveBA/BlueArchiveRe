@@ -3999,20 +3999,27 @@ function renderAccounts(accountsArray) {
         const charGrid = document.createElement('div');
         charGrid.className = 'character-list';
 
-        const sortedChars = sortCharactersByPriority(acc.chars);  // ✅ 여기서 정렬해줌
+        const sortedChars = sortCharactersByPriority(acc.chars);  // ✅ 먼저 정렬
+
         sortedChars.forEach(name => {
             const wrapper = document.createElement('div');
             wrapper.className = 'result-character-card';
 
             const img = document.createElement('img');
             img.src = `/static/images/${name}.png`;
+            img.style.border = `3px solid ${gradeBorderColors[getGradeByName(name)] || 'gray'}`;  // ✅ 테두리 색 적용
 
             const nameDiv = document.createElement('div');
             nameDiv.className = 'character-name';
             nameDiv.innerText = name;
 
+            const featureDiv = document.createElement('div');
+            featureDiv.className = 'character-feature';
+            featureDiv.innerText = getFeatureByName(name);  // ✅ FES, 한정 표시
+
             wrapper.appendChild(img);
             wrapper.appendChild(nameDiv);
+            wrapper.appendChild(featureDiv);  // ✅ 특징도 추가
             charGrid.appendChild(wrapper);
         });
 
