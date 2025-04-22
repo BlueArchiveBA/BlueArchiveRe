@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="description" content="블루아카이브 리세계 판매">
-<meta name="keywords" content="블루아카이브, 블루아카, 리세계, 블루 아카이브 계정, 리세마라, 리세계정, 몰루 리세">
+<meta name="keywords" content="블루아카이브, 블루아카, 블루 아카이브, 블루 아카, 리세계, 계정, 블루 아카이브 계정, 블루 아카 계정, 리세마라, 리세계정, 리세 계정, 한섯, 한국서버, 블루아카채널, 블루아카갤, 블루아카챈, 블루아카리세, 블루아카리세계, 몰루 리세, 몰루 리세계">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>블루아카이브 리세계 판매</title>
 <style>
@@ -61,25 +61,6 @@ body {
 .character-card img.selected {
     border-color: green;
 }
-.update-date {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    color: red;
-    font-weight: bold;
-    font-size: 16px;
-    background-color: #fff7f7;
-    padding: 6px 10px;
-    border: 1px solid #ffcccc;
-    border-radius: 6px;
-    z-index: 1000;
-}
-.intro {
-    margin-top: 60px;
-    font-size: 17px;
-    line-height: 1.6;
-    color: #333;
-}
 #chatButton {
     display: inline-block;
     padding: 12px 20px;
@@ -99,6 +80,25 @@ body {
     transform: translateX(-50%);
     z-index: 999;
 }
+.update-date {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      color: red;
+      font-weight: bold;
+      font-size: 16px;
+      background-color: #fff7f7;
+      padding: 6px 10px;
+      border: 1px solid #ffcccc;
+      border-radius: 6px;
+      z-index: 1000;
+    }
+    .intro {
+      margin-top: 60px;
+      font-size: 17px;
+      line-height: 1.6;
+      color: #333;
+    }
 #selected-info {
     margin-bottom: 15px;
 }
@@ -211,7 +211,6 @@ body {
 <div id="result"></div>
 
 <script>
-// (1) URL 파라미터 읽어오기
 window.onload = function() {
     const urlParams = new URLSearchParams(window.location.search);
     const chatParam = urlParams.get('chat');
@@ -223,32 +222,58 @@ window.onload = function() {
         if (chatNotice) chatNotice.style.display = 'none';
     }
     drawCharacters();
-    showRandomAccounts();
+    searchAccounts();
 };
 
-// (2) 캐릭터 데이터
 const characterData = [
-    { name: '미카', grade: '0티어', feature: 'FES' },
-    { name: '수시노', grade: '0티어', feature: 'FES' },
-    { name: '수나코', grade: '0티어', feature: 'FES' },
-    { name: '드히나', grade: '0티어', feature: 'FES' },
-    { name: '임시노', grade: '0티어', feature: 'FES' },
-    { name: '쿠로코', grade: '0티어', feature: 'FES' },
-    { name: '와카모', grade: '0.5티어', feature: 'FES' },
-    { name: '운유카', grade: '0.5티어', feature: '한정' },
-    { name: '뉴우카', grade: '0.5티어', feature: '한정' },
-    { name: '체리노', grade: '0.5티어', feature: '' },
-    { name: '아코', grade: '0티어', feature: '' }
+            { name: '수시노', grade: '0티어', feature: 'FES' },
+            { name: '미카', grade: '0티어', feature: 'FES' },
+            { name: '수나코', grade: '0티어', feature: 'FES' },
+            { name: '드히나', grade: '0티어', feature: 'FES' },
+            { name: '임시노', grade: '0티어', feature: 'FES' },
+            { name: '쿠로코', grade: '0티어', feature: 'FES' },
+            { name: '키사키', grade: '0티어', feature: '' },
+            { name: '아코', grade: '0티어', feature: '' },
+            { name: '히마리', grade: '0티어', feature: '' },
+            { name: '뉴요코', grade: '0티어', feature: '' },
+            { name: '캠하레', grade: '0티어', feature: '' },
+            { name: '와카모', grade: '0.5티어', feature: 'FES' },
+            { name: '운유카', grade: '0.5티어', feature: '한정' },
+            { name: '뉴우카', grade: '0.5티어', feature: '한정' },
+            { name: '이로하', grade: '0.5티어', feature: '' },
+            { name: '체리노', grade: '0.5티어', feature: '' },
+            { name: '슌', grade: '0.5티어', feature: '' },
+            { name: '우이', grade: '0.5티어', feature: '' },
+            { name: '코코나', grade: '0.5티어', feature: '' },
+            { name: '수로코', grade: '0.5티어', feature: '' },
+            { name: '드아루', grade: '0.5티어', feature: '' },
+            { name: '뉴츠키', grade: '1티어', feature: '한정' },
+            { name: '수즈나', grade: '1티어', feature: '한정' },
+            { name: '수우이', grade: '1티어', feature: '한정' },
+            { name: '마코토', grade: '1티어', feature: '한정' },
+            { name: '드아코', grade: '1티어', feature: '한정' },
+            { name: '나기사', grade: '1티어', feature: '한정' },
+            { name: '아마리', grade: '1티어', feature: '한정' },
+            { name: '온도카', grade: '1티어', feature: '' },
+            { name: '코하루', grade: '1티어', feature: '' },
+            { name: '이오리', grade: '1티어', feature: '' },
+            { name: '히비키', grade: '1티어', feature: '' },
+            { name: '메리스', grade: '1티어', feature: '' },
+            { name: '수야코', grade: '1티어', feature: '' },
+            { name: '수사키', grade: '1티어', feature: '' },
+            { name: '수즈사', grade: '1티어', feature: '' },
+            { name: '운마리', grade: '1티어', feature: '' },
+            { name: '뉴루나', grade: '1티어', feature: '' },
+            { name: '뉴아루', grade: '1티어', feature: '' },
+            { name: '수나타', grade: '1티어', feature: '' },
 ];
 
-// (3) 등급별 테두리 색
 const gradeBorderColors = {
-    "0티어": "rgb(255, 0, 255)",
-    "0.5티어": "rgb(255, 0, 0)",
-    "1티어": "rgb(255, 153, 0)"
+  "0티어": "rgb(255, 0, 255)",
+  "0.5티어": "rgb(255, 0, 0)",
+  "1티어": "rgb(255, 153, 0)"
 };
 
-// (4) 샘플 계정 데이터
 const accounts = [
   {"price": 8.1, "num": "A1_08241809", "chars": ["미카", "체리노", "와카모", "수즈나", "아코", "수우이", "마코토", "이오리", "수시노", "수로코", "운유카", "히마리", "슌", "수사키", "수야코"] },
   {"price": 15.1, "num": "A1_08272034", "chars": ["미카", "체리노", "우이", "수즈나", "아마리", "온도카", "아코", "뉴츠키", "수우이", "마코토", "드아코", "이오리", "수시노", "드히나", "수로코", "히마리", "캠하레", "히비키", "메리스", "키사키", "슌", "코코나"] },
@@ -3924,10 +3949,8 @@ const accounts = [
   {"price": 7.2, "num": "S3_02120853", "chars": ["미카", "수나코", "와카모", "수즈나", "코하루", "수시노", "뉴요코", "수로코", "운유카", "마코토", "키사키", "히비키", "수사키"] },
 ];
 
-// (5) 선택 캐릭터 관리
 let selectedChars = [];
 
-// (6) 캐릭터 토글 함수
 function toggleCharacter(charName, imgElement, wrapperElement) {
     if (selectedChars.includes(charName)) {
         selectedChars = selectedChars.filter(c => c !== charName);
@@ -3941,7 +3964,6 @@ function toggleCharacter(charName, imgElement, wrapperElement) {
     updateSelectedInfo();
 }
 
-// (7) 선택 캐릭터 개수 표시
 function updateSelectedInfo() {
     document.getElementById('selected-count').innerText = selectedChars.length;
     const selectedList = document.getElementById('selected-list');
@@ -3954,14 +3976,12 @@ function updateSelectedInfo() {
     });
 }
 
-// (8) 선택 초기화
 function clearSelection() {
     selectedChars = [];
     drawCharacters();
     updateSelectedInfo();
 }
 
-// (9) 캐릭터 그리기
 function drawCharacters() {
     const charactersDiv = document.getElementById('characters');
     charactersDiv.innerHTML = '';
@@ -3987,18 +4007,23 @@ function drawCharacters() {
         wrapper.appendChild(img);
         wrapper.appendChild(nameDiv);
         wrapper.appendChild(featureDiv);
+
         charactersDiv.appendChild(wrapper);
     });
 }
 
-// (10) 가격/캐릭터로 검색
 function searchAccounts() {
     const minPrice = parseFloat(document.getElementById('minPrice').value);
     const maxPrice = parseFloat(document.getElementById('maxPrice').value);
 
     document.getElementById('spinner').style.display = 'block';
+
     setTimeout(() => {
         document.getElementById('spinner').style.display = 'none';
+
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = '';
+
         const filteredAccounts = accounts.filter(acc => {
             const priceValid = acc.price >= minPrice && acc.price <= maxPrice;
             const charsValid = selectedChars.every(sc => acc.chars.includes(sc));
@@ -4009,71 +4034,49 @@ function searchAccounts() {
             alert('조건에 맞는 계정이 없습니다.');
             return;
         }
-        renderAccounts(filteredAccounts);
+
+        const limitedAccounts = filteredAccounts.slice(0, 100);
+        renderAccounts(limitedAccounts);
+
+        filteredAccounts.forEach(acc => {
+            const accBox = document.createElement('div');
+            accBox.className = 'account-card';
+
+            accBox.innerHTML = `<div class="account-header">
+                <button class="copy-btn" onclick="copyAccount('${acc.num}')">복사</button>
+                <span class="account-num">${acc.num}</span>
+                <span class="account-price">가격: ${acc.price}만</span>
+            </div>`;
+
+            const charGrid = document.createElement('div');
+            charGrid.className = 'character-list';
+
+            acc.chars.forEach(name => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'result-character-card';
+
+                const img = document.createElement('img');
+                img.src = `/static/images/${name}.png`;
+
+                const nameDiv = document.createElement('div');
+                nameDiv.className = 'character-name';
+                nameDiv.innerText = name;
+
+                wrapper.appendChild(img);
+                wrapper.appendChild(nameDiv);
+                charGrid.appendChild(wrapper);
+            });
+
+            accBox.appendChild(charGrid);
+            resultDiv.appendChild(accBox);
+        });
+
     }, 300);
 }
 
-// (11) 복사하기
 function copyAccount(accountNum) {
     navigator.clipboard.writeText(accountNum)
     .then(() => alert('계정번호 복사 완료!'));
-}
-
-// (12) 랜덤 추천 계정
-function showRandomAccounts() {
-    const over20 = accounts.filter(acc => acc.price >= 20);
-    const between10and20 = accounts.filter(acc => acc.price >= 10 && acc.price < 20);
-    const under10 = accounts.filter(acc => acc.price < 10);
-
-    const selected = [
-        ...pickRandom(over20, 3),
-        ...pickRandom(between10and20, 3),
-        ...pickRandom(under10, 4)
-    ];
-    renderAccounts(selected);
-}
-
-function pickRandom(array, count) {
-    const shuffled = [...array].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, Math.min(count, shuffled.length));
-}
-
-// (13) 계정 출력
-function renderAccounts(accountsArray) {
-    const resultDiv = document.getElementById('result');
-    resultDiv.innerHTML = '';
-    accountsArray.forEach(acc => {
-        const accBox = document.createElement('div');
-        accBox.className = 'account-card';
-
-        accBox.innerHTML = `<div class="account-header">
-            <button class="copy-btn" onclick="copyAccount('${acc.num}')">복사</button>
-            <span class="account-num">${acc.num}</span>
-            <span class="account-price">가격: ${acc.price}만</span>
-        </div>`;
-
-        const charGrid = document.createElement('div');
-        charGrid.className = 'character-list';
-
-        acc.chars.forEach(name => {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'result-character-card';
-
-            const img = document.createElement('img');
-            img.src = `/static/images/${name}.png`;
-
-            const nameDiv = document.createElement('div');
-            nameDiv.className = 'character-name';
-            nameDiv.innerText = name;
-
-            wrapper.appendChild(img);
-            wrapper.appendChild(nameDiv);
-            charGrid.appendChild(wrapper);
-        });
-
-        accBox.appendChild(charGrid);
-        resultDiv.appendChild(accBox);
-    });
 }
 </script>
 
