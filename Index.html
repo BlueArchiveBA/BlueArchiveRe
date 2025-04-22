@@ -4083,6 +4083,18 @@ function copyAccount(accountNum) {
     navigator.clipboard.writeText(accountNum)
     .then(() => alert('계정번호 복사 완료!'));
 }
+
+const button = document.getElementById("chatButton");
+    const buttonOffsetTop = button.offsetTop;
+
+    window.addEventListener("scroll", function () {
+      if (window.scrollY >= buttonOffsetTop) {
+        button.classList.add("fixed");
+      } else {
+        button.classList.remove("fixed");
+      }
+    });
+    
 </script>
 
 </body>
