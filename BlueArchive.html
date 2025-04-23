@@ -299,10 +299,11 @@ body {
 <main style="margin-top: 100px;"></main>
 
 <div class="intro">
-안녕하세요!<br>
-블루아카이브 한국서버 리세계를 판매하고 있습니다.<br>
-직접 만들어 출석체크, 뽑기, 1-1소탕을 진행한 계정입니다.<br>
-상담은 <strong>오픈카톡</strong>으로 부탁드립니다.<br>
+    안녕하세요!<br>
+    블루아카이브 <strong>한국서버</strong> 리세계를 판매하고 있습니다.<br>
+    직접 만들어 출석체크, 뽑기, 1-1소탕을 진행한 <strong>국산계정</strong>입니다.<br>
+    캐릭획득순서, 가이드미션, 1-1클리어, 이벤트다시보기 <strong>모든 인증 가능</strong>합니다!<br><br>
+    <strong style="color:red;">※ 늦은 밤이나 새벽시간대 답변이 없을 수 있습니다. 일어나는 즉시 답변드리겠습니다.</strong>
 </div>
 
 <h2>캐릭터 선택 후 계정 찾기</h2>
@@ -4332,8 +4333,10 @@ function searchAccounts(scrollToResult = true) {
 }
 
 function copyAccount(accountNum) {
-    navigator.clipboard.writeText(accountNum)
-    .then(() => alert('계정번호 복사 완료!'));
+    const acc = currentFilteredAccounts.find(a => a.num === accountNum);
+    const copyText = acc ? `${acc.num} (${acc.price}만)` : accountNum;
+    navigator.clipboard.writeText(copyText)
+        .then(() => alert('계정번호 복사 완료!'));
 }
 
 // ★★★ 캐릭터 우선순위 리스트 추가 ★★★
