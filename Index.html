@@ -186,6 +186,14 @@ body {
     background-color: #1b85db;
     color: white;
 }
+.page-dots {
+    padding: 6px 10px;
+    background-color: transparent;
+    border: none;
+    cursor: default;
+    font-size: 16px;
+    color: #999;
+}
 #summary {
     font-size: 16px;
     font-weight: bold;
@@ -4273,6 +4281,8 @@ function renderAccounts(accountsArray) {
         };
         paginationDiv.appendChild(btn);
     }
+
+    renderPagination(totalPage);
 }
 
 function searchAccounts(scrollToResult = true) {
@@ -4359,6 +4369,60 @@ function sortCharactersByPriority(chars) {
     ];
     const priority = Object.fromEntries(priorityList.map((name, idx) => [name, idx]));
     return [...chars].sort((a, b) => (priority[a] ?? 999) - (priority[b] ?? 999));
+}
+
+function renderPagination(totalPage) {
+    const paginationDiv = document.getElementById('pagination');
+    paginationDiv.innerHTML = '';
+
+    let start = Math.max(2, currentPage - 4);
+    let end = Math.min(totalPage - 1, currentPage + 4);
+
+    // 항상 1페이지는 표시
+    const first = document.createElement('button');
+    first.className = 'page-btn' + (currentPage === 1 ? ' active' : '');
+    first.innerText = '1';
+    first.onclick = () => goToPage(1);
+    paginationDiv.appendChild(first);
+
+    // 왼쪽 생략부호
+    if (start > 2) {
+        const dots = document.createElement('span');
+        dots.className = 'page-dots';
+        dots.innerText = '...';
+        paginationDiv.appendChild(dots);
+    }
+
+    for (let i = start; i <= end; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'page-btn' + (i === currentPage ? ' active' : '');
+        btn.innerText = i;
+        btn.onclick = () => goToPage(i);
+        paginationDiv.appendChild(btn);
+    }
+
+    // 오른쪽 생략부호
+    if (end < totalPage - 1) {
+        const dots = document.createElement('span');
+        dots.className = 'page-dots';
+        dots.innerText = '...';
+        paginationDiv.appendChild(dots);
+    }
+
+    // 마지막 페이지는 항상 표시
+    if (totalPage > 1) {
+        const last = document.createElement('button');
+        last.className = 'page-btn' + (currentPage === totalPage ? ' active' : '');
+        last.innerText = totalPage;
+        last.onclick = () => goToPage(totalPage);
+        paginationDiv.appendChild(last);
+    }
+}
+
+function goToPage(page) {
+    currentPage = page;
+    renderAccounts(currentFilteredAccounts);
+    window.scrollTo({ top: document.getElementById('characters').offsetTop, behavior: 'smooth' });
 }
     
 </script>
