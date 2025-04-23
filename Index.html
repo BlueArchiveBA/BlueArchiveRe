@@ -238,43 +238,63 @@ body {
   body {
     margin: 10px;
   }
+
   #characters {
-    grid-template-columns: repeat(3, 1fr);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     gap: 10px;
+    padding: 0 10px;
   }
+
   .character-card {
-    width: 70px;
+    width: 100%;
+    max-width: 100px;
     padding: 2px;
+    margin: 0 auto;
   }
+
   .character-card img {
     width: 52px;
     height: 52px;
   }
+
   .character-name {
     font-size: 12px;
   }
+
   .character-feature {
     font-size: 11px;
   }
+
   .account-card {
     padding: 10px;
   }
+
   .result-character-card {
     width: 52px;
   }
+
   .result-character-card img {
     width: 52px;
     height: 52px;
   }
+
   .update-date {
     font-size: 13px;
     padding: 4px 6px;
   }
+
   .intro {
     font-size: 15px;
     margin-top: 30px;
   }
+
+  #chatButton {
+    font-size: 14px;
+    padding: 10px 15px;
+  }
 }
+
 
 </style>
 </head>
