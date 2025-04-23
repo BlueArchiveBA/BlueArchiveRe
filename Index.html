@@ -4244,7 +4244,8 @@ function renderAccounts(accountsArray) {
         const charGrid = document.createElement('div');
         charGrid.className = 'character-list';
 
-        const sortedChars = sortCharactersByPriority(acc.chars);
+        const uniqueChars = [...new Set(acc.chars)];
+        const sortedChars = sortCharactersByPriority(uniqueChars);  
 
         sortedChars.forEach(name => {
             const wrapper = document.createElement('div');
