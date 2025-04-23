@@ -12,6 +12,7 @@ body {
     background: #e8f5e9;
     text-align: center;
     margin: 20px;
+    padding-top: 70px;
 }
 #characters {
     display: grid;
@@ -208,11 +209,11 @@ body {
     background-color: transparent;
     z-index: 10000;
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 20px;
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
+    gap: 10px;
+    padding: 8px 10px;
     border: none;
 }
 #chatButton {
@@ -226,19 +227,18 @@ body {
     font-size: 15px;
 }
 .update-date {
-    font-size: 14px;
+    font-size: 13px;
     color: red;
     background: #fff7f7;
-    padding: 6px 10px;
-    border: 1px solid #ffcccc;
+    padding: 4px 8px;
     border-radius: 6px;
     font-weight: bold;
+    border: none;
 }
 @media (max-width: 768px) {
   body {
     margin: 10px;
   }
-
   #characters {
     display: flex;
     flex-direction: column;
@@ -246,53 +246,49 @@ body {
     margin-bottom: 20px;
     align-items: center;
   }
-
   .character-card {
     width: 70px;
     padding: 2px;
   }
-
   .character-card img {
     width: 52px;
     height: 52px;
   }
-
   .character-name {
     font-size: 12px;
   }
-
   .character-feature {
     font-size: 11px;
   }
-
   .account-card {
     padding: 10px;
   }
-
   .result-character-card {
     width: 52px;
   }
-
   .result-character-card img {
     width: 52px;
     height: 52px;
   }
-
   .update-date {
-    font-size: 13px;
-    padding: 4px 6px;
+    font-size: 12px;
+    padding: 3px 6px;
+    width: auto;
   }
-
   .intro {
     font-size: 15px;
     margin-top: 30px;
   }
-
-  #chatButton {
-    font-size: 14px;
-    padding: 10px 15px;
+  #header-bar {
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
   }
-
+  #chatButton {
+    width: 90%;
+    text-align: center;
+    font-size: 14px;
+  }
   .character-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -307,9 +303,8 @@ body {
 
 <div id="header-bar">
     <a href="https://open.kakao.com/o/sUiS9iEe" target="_blank" id="chatButton">🛋 1:1 상담 바로가기</a>  
+    <div class="update-date">📅 목록 업데이트 : 2025년 4월 23일</div>
 </div>    
-
-<div class="update-date">📅 목록 업데이트 : 2025년 4월 23일</div>
 
 <div class="intro">
 안녕하세요!<br>
