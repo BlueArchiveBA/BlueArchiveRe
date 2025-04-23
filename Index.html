@@ -61,29 +61,10 @@ body {
 .character-card img.selected {
     border-color: green;
 }
-#chatButton {
-    display: inline-block;
-    padding: 12px 20px;
-    background-color: #FFEB00;
-    color: #000;
-    font-weight: bold;
-    border-radius: 8px;
-    text-decoration: none;
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-    margin-top: 20px;
-    transition: all 0.3s ease;
-}
-.chat-btn.fixed {
-    position: fixed;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 999;
-}
 .update-date {
       position: absolute;
       top: 10px;
-      right: 10px;
+      right: 30px;
       color: red;
       font-weight: bold;
       font-size: 16px;
@@ -219,6 +200,40 @@ body {
     text-align: left;
     width: 100%;
 }
+#header-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: transparent;
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    border: none;
+}
+#chatButton {
+    padding: 10px 20px;
+    background-color: #FFEB00;
+    color: #000;
+    font-weight: bold;
+    border-radius: 8px;
+    text-decoration: none;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    font-size: 15px;
+}
+.update-date {
+    font-size: 14px;
+    color: red;
+    background: #fff7f7;
+    padding: 6px 10px;
+    border: 1px solid #ffcccc;
+    border-radius: 6px;
+    font-weight: bold;
+}
 @media (max-width: 768px) {
   body {
     margin: 10px;
@@ -228,68 +243,55 @@ body {
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
   }
-
   .character-card {
     width: 70px;
     padding: 2px;
   }
-
   .character-card img {
     width: 52px;
     height: 52px;
   }
-
   .character-name {
     font-size: 12px;
   }
-
   .character-feature {
     font-size: 11px;
   }
-
   .account-card {
     padding: 10px;
   }
-
   .result-character-card {
     width: 52px;
   }
-
   .result-character-card img {
     width: 52px;
     height: 52px;
   }
-
   .update-date {
     font-size: 13px;
     padding: 4px 6px;
   }
-
   .intro {
     font-size: 15px;
     margin-top: 30px;
   }
-
-  #chatButton {
-    font-size: 14px;
-    padding: 10px 15px;
-  }
 }
+
 </style>
 </head>
 <body>
 
-<div class="update-date">🗓️ 목록 업데이트 : 2025년 4월 23일</div>
+<div id="header-bar">
+    <a href="https://open.kakao.com/o/sUiS9iEe" target="_blank" id="chatButton">🛋 1:1 상담 바로가기</a>
+    <div class="update-date">📅 목록 업데이트 : 2025년 4월 23일</div>
+</div>    
 
 <div class="intro">
 안녕하세요!<br>
 블루아카이브 한국서버 리세계를 판매하고 있습니다.<br>
 직접 만들어 출석체크, 뽑기, 1-1소탕을 진행한 계정입니다.<br>
-검색되는 계정목록은 <strong>주기적으로 업데이트</strong>됩니다.<br>
-<span id="chatNotice">상담은 <strong>오픈카톡</strong>으로 부탁드립니다.</span>
+상담은 <strong>오픈카톡</strong>으로 부탁드립니다.<br>
 </div>
-
-<a href="https://open.kakao.com/o/sUiS9iEe" target="_blank" id="chatButton" class="chat-btn">🛋 1:1 상담 바로가기</a>
 
 <h2>캐릭터 선택 후 계정 찾기</h2>
 
@@ -328,15 +330,7 @@ const pageSize = 20;
 let currentFilteredAccounts = [];
 
 window.onload = function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const chatParam = urlParams.get('chat');
-    if (chatParam === 'off') {
-        const chatButton = document.getElementById('chatButton');
-        if (chatButton) chatButton.style.display = 'none';
-
-        const chatNotice = document.getElementById('chatNotice');
-        if (chatNotice) chatNotice.style.display = 'none';
-    }
+    const urlParams = new URLSearchParams(window.location.search);    
     drawCharacters();
     searchAccounts(false);
 };
@@ -4244,7 +4238,7 @@ function renderAccounts(accountsArray) {
         charGrid.className = 'character-list';
 
         const uniqueChars = [...new Set(acc.chars)];
-        const sortedChars = sortCharactersByPriority(uniqueChars);  
+        const sortedChars = sortCharactersByPriority(uniqueChars);
 
         sortedChars.forEach(name => {
             const wrapper = document.createElement('div');
@@ -4333,17 +4327,6 @@ function copyAccount(accountNum) {
     navigator.clipboard.writeText(accountNum)
     .then(() => alert('계정번호 복사 완료!'));
 }
-
-const button = document.getElementById("chatButton");
-    const buttonOffsetTop = button.offsetTop;
-
-    window.addEventListener("scroll", function () {
-      if (window.scrollY >= buttonOffsetTop) {
-        button.classList.add("fixed");
-      } else {
-        button.classList.remove("fixed");
-      }
-    });
 
 // ★★★ 캐릭터 우선순위 리스트 추가 ★★★
 const priorityList = [

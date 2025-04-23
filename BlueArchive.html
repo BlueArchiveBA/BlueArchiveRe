@@ -64,7 +64,7 @@ body {
 .update-date {
       position: absolute;
       top: 10px;
-      right: 10px;
+      right: 30px;
       color: red;
       font-weight: bold;
       font-size: 16px;
@@ -200,6 +200,30 @@ body {
     text-align: left;
     width: 100%;
 }
+#header-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: transparent;
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    border: none;
+}
+.update-date {
+    font-size: 14px;
+    color: red;
+    background: #fff7f7;
+    padding: 6px 10px;
+    border: 1px solid #ffcccc;
+    border-radius: 6px;
+    font-weight: bold;
+}
 @media (max-width: 768px) {
   body {
     margin: 10px;
@@ -209,60 +233,52 @@ body {
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
   }
-
   .character-card {
     width: 70px;
     padding: 2px;
   }
-
   .character-card img {
     width: 52px;
     height: 52px;
   }
-
   .character-name {
     font-size: 12px;
   }
-
   .character-feature {
     font-size: 11px;
   }
-
   .account-card {
     padding: 10px;
   }
-
   .result-character-card {
     width: 52px;
   }
-
   .result-character-card img {
     width: 52px;
     height: 52px;
   }
-
   .update-date {
     font-size: 13px;
     padding: 4px 6px;
   }
-
   .intro {
     font-size: 15px;
     margin-top: 30px;
   }
-
 }
+
 </style>
 </head>
 <body>
 
-<div class="update-date">🗓️ 목록 업데이트 : 2025년 4월 23일</div>
+<div id="header-bar">
+    <div class="update-date">📅 목록 업데이트 : 2025년 4월 23일</div>
+</div>    
 
 <div class="intro">
 안녕하세요!<br>
 블루아카이브 한국서버 리세계를 판매하고 있습니다.<br>
 직접 만들어 출석체크, 뽑기, 1-1소탕을 진행한 계정입니다.<br>
-검색되는 계정목록은 <strong>주기적으로 업데이트</strong>됩니다.<br>
 </div>
 
 <h2>캐릭터 선택 후 계정 찾기</h2>
