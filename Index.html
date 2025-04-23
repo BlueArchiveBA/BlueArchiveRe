@@ -305,6 +305,14 @@ body {
     <input id="maxPrice" type="number" min="1" max="99" value="99" style="width:60px;"> 만원
 </div>
 
+<div style="margin:10px 0;">
+    정렬순서:
+    <select id="sortOrder" style="margin-left:10px;">
+      <option value="asc">가격 낮은순</option>
+      <option value="desc">가격 높은순</option>
+    </select>
+</div>
+  
 <button onclick="searchAccounts()" style="padding:10px 20px; font-size:16px;">계정찾기</button>
 <div id="spinner">🔄 로딩 중...</div>
 
@@ -4294,11 +4302,17 @@ function searchAccounts(scrollToResult = true) {
     setTimeout(() => {
         document.getElementById('spinner').style.display = 'none';
 
-        const filteredAccounts = accounts.filter(acc => {
-            const priceValid = acc.price >= minPrice && acc.price <= maxPrice;
-            const charsValid = selectedChars.every(sc => acc.chars.includes(sc));
-            return priceValid && charsValid;
-        });
+        const sortOrder = document.getElementById('sortOrder').value;
+
+        const filteredAccounts = accounts
+            .filter(acc => {
+                const priceValid = acc.price >= minPrice && acc.price <= maxPrice;
+                const charsValid = selectedChars.every(sc => acc.chars.includes(sc));
+                return priceValid && charsValid;
+            })
+            .sort((a, b) => {
+                return sortOrder === 'asc' ? a.price - b.price : b.price - a.price;
+            });
 
         if (filteredAccounts.length === 0) {
             alert('조건에 맞는 계정이 없습니다.');
