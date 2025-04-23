@@ -12,195 +12,8 @@ body {
     background: #e8f5e9;
     text-align: center;
     margin: 20px;
-    padding-top: 70px;
 }
-#characters {
-    display: grid;
-    grid-template-columns: repeat(15, 100px);
-    gap: 15px;
-    justify-content: center;
-    margin-bottom: 20px;
-}
-.character-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 80px;
-    padding: 4px;
-    border-radius: 10px;
-    background: #f9f9f9;
-    transition: all 0.3s ease;
-}
-.character-card img {
-    width: 60px;
-    height: 60px;
-    border-radius: 10px;
-    border: 3px solid gray;
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-.character-card:hover {
-    transform: scale(1.05);
-    background: #eef7ff;
-}
-.character-card:hover img {
-    border-color: #3399ff;
-}
-.character-name {
-    margin-top: 5px;
-    font-size: 14px;
-    font-weight: bold;
-    color: #333;
-}
-.character-feature {
-    font-size: 12px;
-    color: #ff5656;
-}
-.character-card.selected {
-    background: #cfe9ff;
-}
-.character-card img.selected {
-    border-color: green;
-}
-.update-date {
-      position: absolute;
-      top: 10px;
-      right: 30px;
-      color: red;
-      font-weight: bold;
-      font-size: 16px;
-      background-color: #fff7f7;
-      padding: 6px 10px;
-      border: 1px solid #ffcccc;
-      border-radius: 6px;
-      z-index: 1000;
-    }
-.intro {
-      margin-top: 60px;
-      font-size: 17px;
-      line-height: 1.6;
-      color: #333;
-}
-#selected-info {
-    margin-bottom: 15px;
-}
-#selected-list img {
-    width: 40px;
-    height: 40px;
-    margin: 3px;
-    border-radius: 5px;
-    border: 2px solid #aaa;
-}
-#spinner {
-    display: none;
-    margin-top: 20px;
-    font-size: 18px;
-    color: #555;
-}
-#result {
-    max-width: 1400px;
-    margin: 30px auto;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-.account-card {
-    width: 100%;
-    background: #fff;
-    border-radius: 15px;
-    padding: 15px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-.account-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 15px;
-    font-size: 16px;
-    justify-content: flex-start;
-}
-.copy-btn {
-    padding: 5px 10px;
-    background: #4caf50;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-}
-.account-price {
-    font-weight: bold;
-    color: #1b85db;
-    margin-left: 10px;
-}
-.character-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: flex-start;
-}
-.result-character-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 60px;
-}
-.result-character-card img {
-    width: 60px;
-    height: 60px;
-    border-radius: 10px;
-    border: 3px solid gray;
-}
-#pagination {
-    display: flex;
-    justify-content: center;
-    gap: 5px;
-    margin: 10px auto;
-}
-.page-btn {
-    padding: 6px 10px;
-    background-color: #eee;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    cursor: pointer;
-}
-.page-btn.active {
-    background-color: #1b85db;
-    color: white;
-}
-.page-dots {
-    padding: 6px 10px;
-    background-color: transparent;
-    border: none;
-    cursor: default;
-    font-size: 16px;
-    color: #999;
-}
-#summary {
-    font-size: 16px;
-    font-weight: bold;
-    margin-top: 15px;
-}
-#characters {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    margin-bottom: 20px;
-    align-items: center;
-}
-.character-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 15px;
-    justify-content: center;
-}
-.tier-label {
-    font-size: 20px;
-    font-weight: bold;
-    margin: 10px 0 0;
-    text-align: left;
-    width: 100%;
-}
+
 #header-bar {
     position: fixed;
     top: 0;
@@ -209,13 +22,14 @@ body {
     background-color: transparent;
     z-index: 10000;
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 10px;
-    padding: 8px 10px;
-    border: none;
+    gap: 15px;
+    padding: 10px;
+    flex-wrap: nowrap;
+    flex-direction: row;
 }
+
 #chatButton {
     padding: 10px 20px;
     background-color: #FFEB00;
@@ -226,74 +40,268 @@ body {
     box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
     font-size: 15px;
 }
+
 .update-date {
-    font-size: 13px;
+    font-size: 14px;
     color: red;
     background: #fff7f7;
-    padding: 4px 8px;
+    padding: 6px 10px;
+    border: 1px solid #ffcccc;
     border-radius: 6px;
     font-weight: bold;
-    border: none;
 }
-@media (max-width: 768px) {
-  body {
-    margin: 10px;
-  }
-  #characters {
+
+.intro {
+    margin-top: 80px;
+    font-size: 17px;
+    line-height: 1.6;
+    color: #333;
+}
+
+#selected-info {
+    margin-bottom: 15px;
+}
+
+#selected-list img {
+    width: 40px;
+    height: 40px;
+    margin: 3px;
+    border-radius: 5px;
+    border: 2px solid #aaa;
+}
+
+#spinner {
+    display: none;
+    margin-top: 20px;
+    font-size: 18px;
+    color: #555;
+}
+
+#result {
+    max-width: 1400px;
+    margin: 30px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.account-card {
+    width: 100%;
+    background: #fff;
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.account-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    font-size: 16px;
+    justify-content: flex-start;
+}
+
+.copy-btn {
+    padding: 5px 10px;
+    background: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.account-price {
+    font-weight: bold;
+    color: #1b85db;
+    margin-left: 10px;
+}
+
+.character-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-start;
+}
+
+.result-character-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 60px;
+}
+
+.result-character-card img {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    border: 3px solid gray;
+}
+
+#pagination {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin: 10px auto;
+}
+
+.page-btn {
+    padding: 6px 10px;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.page-btn.active {
+    background-color: #1b85db;
+    color: white;
+}
+
+.page-dots {
+    padding: 6px 10px;
+    background-color: transparent;
+    border: none;
+    cursor: default;
+    font-size: 16px;
+    color: #999;
+}
+
+#summary {
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+#characters {
     display: flex;
     flex-direction: column;
     gap: 20px;
     margin-bottom: 20px;
     align-items: center;
+}
+
+.character-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 15px;
+    justify-content: center;
+}
+
+.character-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80px;
+    padding: 4px;
+    border-radius: 10px;
+    background: #f9f9f9;
+    transition: all 0.3s ease;
+}
+
+.character-card img {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    border: 3px solid gray;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.character-card:hover {
+    transform: scale(1.05);
+    background: #eef7ff;
+}
+
+.character-card:hover img {
+    border-color: #3399ff;
+}
+
+.character-name {
+    margin-top: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+.character-feature {
+    font-size: 12px;
+    color: #ff5656;
+}
+
+.character-card.selected {
+    background: #cfe9ff;
+}
+
+.character-card img.selected {
+    border-color: green;
+}
+
+/* 모바일 대응 */
+@media (max-width: 768px) {
+  body {
+    margin: 10px;
   }
+
+  #header-bar {
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .update-date {
+    order: 0;
+    font-size: 13px;
+    padding: 4px 6px;
+    text-align: center;
+  }
+
+  #chatButton {
+    order: 1;
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+
+  #characters {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 10px;
+  }
+
   .character-card {
     width: 70px;
     padding: 2px;
   }
+
   .character-card img {
     width: 52px;
     height: 52px;
   }
+
   .character-name {
     font-size: 12px;
   }
+
   .character-feature {
     font-size: 11px;
   }
+
   .account-card {
     padding: 10px;
   }
+
   .result-character-card {
     width: 52px;
   }
+
   .result-character-card img {
     width: 52px;
     height: 52px;
   }
-  .update-date {
-    font-size: 12px;
-    padding: 3px 6px;
-    width: auto;
-  }
+
   .intro {
     font-size: 15px;
     margin-top: 30px;
-  }
-  #header-bar {
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-  }
-  #chatButton {
-    width: 90%;
-    text-align: center;
-    font-size: 14px;
-  }
-  .character-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    justify-content: center;
   }
 }
 
@@ -302,9 +310,11 @@ body {
 <body>
 
 <div id="header-bar">
-    <a href="https://open.kakao.com/o/sUiS9iEe" target="_blank" id="chatButton">🛋 1:1 상담 바로가기</a>  
     <div class="update-date">📅 목록 업데이트 : 2025년 4월 23일</div>
-</div>    
+    <a href="https://open.kakao.com/o/sUiS9iEe" target="_blank" id="chatButton">🛋 1:1 상담 바로가기</a>
+</div>
+      
+
 
 <div class="intro">
 안녕하세요!<br>
