@@ -288,12 +288,42 @@ body {
   }
 }
 
+#quick-nav {
+  margin: 30px auto 10px;
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 560px;
+}
+
+.quick-btn {
+  flex: 1 1 200px;
+  padding: 12px 18px;
+  background-color: #ffffff;
+  color: #1b85db;
+  font-weight: 600;
+  border-radius: 10px;
+  text-decoration: none;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.12);
+  font-size: 16px;
+  transition: background 0.2s ease;
+}
+.quick-btn:hover { background-color: #f0f8ff; }
+
+@media (max-width: 600px) {
+  .quick-btn {
+    flex: 1 1 100%;
+    font-size: 15px;
+  }
+}
+
 </style>
 </head>
 <body>
 
 <div id="header-bar">
-    <div class="update-date">📅 목록 업데이트 : 2025년 5월 29일</div>    
+    <div class="update-date">📅 목록 업데이트 : 2025년 5월 30일</div>    
 </div>
       
 <main style="margin-top: 100px;"></main>
@@ -306,6 +336,11 @@ body {
     <strong style="color:red;">※ 늦은 밤이나 새벽시간대 답변이 없을 수 있습니다. 일어나는 즉시 답변드리겠습니다.</strong>
 </div>
 
+<div id="quick-nav">
+    <a href="/guide/trade.html"      class="quick-btn">💡 거래 가이드</a>
+    <a href="/guide/faq.html"        class="quick-btn">❓ FAQ</a>
+</div>
+
 <h2>캐릭터 선택 후 계정 찾기</h2>
 
 <div id="selected-info">
@@ -315,9 +350,9 @@ body {
 <div id="selected-list"></div>
 
 <div style="margin:20px 0;">
-    가격:
+    <strong style="color:red;">가격:
     <input id="minPrice" type="number" min="1" max="99" value="1" style="width:60px;"> ~
-    <input id="maxPrice" type="number" min="1" max="99" value="99" style="width:60px;"> 만원
+    <input id="maxPrice" type="number" min="1" max="99" value="99" style="width:60px;"> 만원</strong>
 </div>
 
 <div style="margin:10px 0;">

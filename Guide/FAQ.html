@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FAQ | 블루아카이브 리세계</title>
+
+    <!-- SEO metadata -->
+    <meta name="description" content="블루아카이브 한국서버 리세계 계정 구매자들이 가장 자주 묻는 질문(FAQ) 모음" />
+    <link rel="canonical" href="https://bluearchivereset.netlify.app/guide/faq" />
+
+    <!-- FAQ 구조화 데이터 (JSON‑LD) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "계정 전달까지 얼마나 걸리나요?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "입금 확인 후 10~30분 이내에 연동 계정으로 로그인이 가능하도록 전달해 드립니다. 새벽 시간대에는 최대 1시간까지 걸릴 수 있습니다."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "구매 후 환불이 가능한가요?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "계정 정보가 전달된 이후에는 디지털 상품 특성상 환불이 어렵습니다. 구매 전 캐릭터·가격을 반드시 확인해 주세요."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "계정이 정지될 위험은 없나요?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "모든 계정은 순수 리세마라만 진행한 ‘국산 계정’이며, 매크로·불법 프로그램을 사용하지 않았습니다. 단, 게임 운영 정책 변경 등으로 인한 정지 가능성을 100% 배제할 수는 없습니다."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "어떤 플랫폼 계정을 준비해야 하나요?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Nexon, Google, Naver, Facebook 중 로그인 이력이 없는 신규 계정을 준비해 주세요. 기존에 블루아카이브를 실행한 적이 없어야 합니다."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "가챠·출석 진행 상태가 궁금해요.",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "모든 리세계 계정은 튜토리얼·가이드 미션·1‑1 클리어까지 진행되어 있으며, 출석 보상은 받은 날을 기준으로 중간까지 수령된 상태입니다. 자세한 스크린샷은 요청 주시면 바로 보내드립니다."}
+          },
+          {
+            "@type": "Question",
+            "name": "추가 결제(인앱 결제) 이력이 있나요?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "없습니다. 리세계 전용 계정이므로 유료 상품을 구매한 적이 없습니다."
+            }
+          }
+        ]
+      }
+    </script>
+
+    <!-- Pretendard WebFont (선택) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800&display=swap" rel="stylesheet" />
+
+    <style>
+      :root {
+        --primary: #1b85db;
+        --bg: #e8f5e9;
+        --dark: #333;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        font-family: "Pretendard", sans-serif;
+        color: var(--dark);
+        padding: 0 20px 40px;
+        text-align: center;
+      }
+
+      #header-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(6px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        z-index: 1000;
+      }
+
+      #header-bar a {
+        text-decoration: none;
+        font-weight: 600;
+        color: var(--dark);
+      }
+
+      main {
+        max-width: 820px;
+        margin: 120px auto 0;
+      }
+
+      h1 {
+        font-size: 32px;
+        font-weight: 800;
+        margin-bottom: 26px;
+      }
+
+      /* FAQ accordion */
+      .faq-item {
+        background: #fff;
+        border-radius: 10px;
+        margin-bottom: 14px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+      }
+
+      .faq-q {
+        padding: 16px 20px;
+        font-size: 17px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .faq-q::after {
+        content: "➕";
+        font-size: 18px;
+        transition: transform 0.3s ease;
+      }
+
+      .faq-item.open .faq-q::after {
+        transform: rotate(45deg);
+      }
+
+      .faq-a {
+        max-height: 0;
+        overflow: hidden;
+        background: #fafafa;
+        padding: 0 20px;
+        font-size: 15px;
+        line-height: 1.6;
+        transition: max-height 0.3s ease;
+      }
+
+      .faq-item.open .faq-a {
+        padding: 14px 20px 20px;
+        max-height: 400px;
+      }
+
+      footer {
+        margin-top: 50px;
+        font-size: 14px;
+      }
+
+      /* responsive */
+      @media (max-width: 600px) {
+        h1 {
+          font-size: 26px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+
+    <main>
+      <h1>자주 묻는 질문</h1>
+
+      <section id="faq-list">
+        <!-- FAQ items (Q&A) -->
+        <div class="faq-item open">
+          <div class="faq-q">계정 전달까지 얼마나 걸리나요?</div>
+          <div class="faq-a">입금 확인 후 10~30분 이내에 연동 계정으로 로그인이 가능하도록 전달해 드립니다.</div>
+        </div>
+
+        <div class="faq-item open">
+          <div class="faq-q">구매 후 환불이 가능한가요?</div>
+          <div class="faq-a">계정 정보가 전달된 이후에는 디지털 상품 특성상 환불이 어렵습니다. 구매 전에 캐릭터와&nbsp;/ 가격을 반드시 확인해 주세요.</div>
+        </div>
+
+        <div class="faq-item open">
+          <div class="faq-q">계정이 정지될 위험은 없나요?</div>
+          <div class="faq-a">모든 계정은 순수 리세마라만 진행한 ‘국산 계정’이며, 매크로·불법 프로그램을 사용하지 않았습니다. 지금까지 약 3년간 정지 이력 0건입니다!</div>
+        </div>
+
+        <div class="faq-item open">
+          <div class="faq-q">어떤 플랫폼 계정을 준비해야 하나요?</div>
+          <div class="faq-a">Nexon, Google, Naver, Facebook 중 <u>로그인 이력이 없는 신규 계정</u>을 준비해 주세요. 기존에 블루아카이브를 실행한 적이 없어야 합니다.</div>
+        </div>
+
+        <div class="faq-item open">
+          <div class="faq-q">가챠·출석 진행 상태가 궁금해요.</div>
+          <div class="faq-a">모든 리세계 계정은 튜토리얼·가이드 미션·1‑1 클리어까지 진행되어 있으며, 출석 보상은 받은 날을 기준으로 중간까지 수령된 상태입니다. AP소모를 위해 1-1소탕을 진행하여 계정 레벨이 5~50까지 있습니다. 자세한 스크린샷은 요청 주시면 바로 보내드립니다.</div>
+        </div>
+
+        <div class="faq-item open">
+          <div class="faq-q">추가 결제(인앱 결제) 이력이 있나요?</div>
+          <div class="faq-a">없습니다. 리세계 전용 게스트계정이므로 유료 상품을 구매한 적이 없습니다.</div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- simple accordion script -->
+    <script>
+      document.querySelectorAll(".faq-item").forEach((item) => {
+        const q = item.querySelector(".faq-q");
+        q.addEventListener("click", () => {
+          item.classList.toggle("open");
+        });
+      });
+    </script>
+  </body>
+</html>

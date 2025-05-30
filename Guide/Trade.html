@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>거래 가이드 | 블루아카이브 리세계</title>
+
+    <!-- SEO metadata -->
+    <meta name="description" content="블루아카이브 한국서버 리세계 계정 안전 거래 가이드 – 캐릭터 선택부터 계정 전달까지 전체 절차 안내" />
+    <link rel="canonical" href="https://bluearchivereset.netlify.app/guide/trade" />
+
+    <!-- Pretendard WebFont (optional – remove if 이미 메인에서 import 중) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800&display=swap" rel="stylesheet" />
+
+    <style>
+      :root {
+        --primary: #1b85db;
+        --accent: #ffeb00;
+        --bg: #e8f5e9;
+        --dark: #333;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 0 20px 40px;
+        background: var(--bg);
+        font-family: "Pretendard", sans-serif;
+        color: var(--dark);
+        text-align: center;
+      }
+
+      /* ───── fixed header bar ───── */
+      #header-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(6px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        z-index: 1000;
+      }
+
+      #header-bar a {
+        text-decoration: none;
+        font-weight: 600;
+        color: var(--dark);
+      }
+
+      #chatButton {
+        padding: 8px 18px;
+        border-radius: 8px;
+        background: var(--accent);
+        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+        font-weight: 700;
+      }
+
+      main {
+        max-width: 820px;
+        margin: 120px auto 0;
+      }
+
+      h1 {
+        font-size: 32px;
+        font-weight: 800;
+        margin-bottom: 12px;
+      }
+
+      p.subtitle {
+        font-size: 17px;
+        margin-bottom: 32px;
+        line-height: 1.5;
+      }
+
+      /* ───── step cards ───── */
+      .steps {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+      }
+
+      .step {
+        background: #fff;
+        border-radius: 12px;
+        padding: 20px 24px;
+        text-align: left;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+        display: flex;
+        gap: 18px;
+        align-items: flex-start;
+      }
+
+      .step-num {
+        min-width: 42px;
+        min-height: 42px;
+        border-radius: 50%;
+        background: var(--primary);
+        color: #fff;
+        font-weight: 700;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .step-text {
+        flex: 1;
+        font-size: 16px;
+        line-height: 1.6;
+      }
+
+      /* notice */
+      .notice {
+        margin-top: 30px;
+        background: #fff7f7;
+        border: 1px solid #ffcccc;
+        border-radius: 10px;
+        padding: 16px 20px;
+        font-size: 15px;
+        line-height: 1.6;
+        color: #d32f2f;
+      }
+
+      /* footer nav */
+      footer {
+        margin-top: 50px;
+        font-size: 14px;
+      }
+
+      /* ───── responsive ───── */
+      @media (max-width: 600px) {
+        h1 {
+          font-size: 26px;
+        }
+        .step {
+          padding: 16px 18px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+
+    <main>
+      <h1>거래 가이드</h1>
+      <p class="subtitle">
+        캐릭터 선택부터 계정 전달까지, <strong>안전하고 빠른 거래</strong>를 위한 전 과정을 한눈에 확인하세요.
+      </p>
+
+      <section class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-text"><strong>캐릭터 선택</strong><br />원하는 캐릭터를 클릭하여 선택합니다.</div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-text"><strong>계정 조회</strong><br />가격·보유 캐릭터가 맞는 계정을 확인합니다.</div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-text"><strong>계정번호 복사</strong><br />마음에 드는 계정의 ‘복사’ 버튼을 눌러 계정번호를 클립보드에 저장합니다.</div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-text"><strong>번호 전달</strong><br />채팅방에 복사한 <code>계정번호</code>를 보내 주세요.</div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-text"><strong>구입신청(입금)</strong><br />구입신청(입금) 후 채팅으로 알려 주세요.</div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">6</div>
+          <div class="step-text"><strong>연동용 계정·비밀번호 전달</strong><br />연동할 플랫폼 계정(NEXON, Google, Naver, Facebook)의 <em>아이디 & 비밀번호</em>를 보내 주세요.<br />※ <u>게임에 로그인 이력이 없는 신규 계정</u>이어야 합니다.</div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">7</div>
+          <div class="step-text"><strong>연동 & 계정 확인</strong><br />관리자가 계정을 연동한 뒤, 로그인 확인이 완료되면 인수하여 <strong>거래 종료</strong>!</div>
+        </div>
+      </section>
+
+      <footer>
+        👉 <a href="/">메인 페이지로 돌아가기</a>
+      </footer>
+    </main>
+  </body>
+</html>
