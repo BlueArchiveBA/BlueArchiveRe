@@ -1,0 +1,9 @@
+/sitemap.xml
+  Content-Type: application/xml
+  Cache-Control: no-cache
+  ETag: ""
+
+/robots.txt
+  Content-Type: text/plain
+  Cache-Control: no-cache
+  ETag: ""
