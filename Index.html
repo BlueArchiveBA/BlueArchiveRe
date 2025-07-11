@@ -419,18 +419,19 @@ body {
 <div id="result"></div>
 <div id="pagination"></div>
 
-<div id="accountModal" style="display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(30,40,60,0.44); z-index:99999; justify-content:center; align-items:center;">
-    <div style="background:#fff; border-radius:18px; max-width:480px; width:90vw; padding:26px 18px 16px; box-shadow:0 6px 40px rgba(0,0,0,0.2); position:relative;">
-      <button onclick="closeAccountModal()" style="position:absolute; right:14px; top:14px; font-size:20px; background:none; border:none; cursor:pointer;">×</button>
-      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
-        <h3 style="margin:0; font-size:20px; color:#1b85db; font-weight:800;" id="modalAccountNum">계정 상세</h3>
-        <span style="color:#1b85db; font-size:16px; font-weight:700;" id="modalAccountPrice"></span>
-        <span id="modalAccountCount" style="margin-left:8px; color:#34495e; font-size:15px; font-weight:600;"></span>
-        <button id="modalCopyBtn" class="copy-btn" style="padding:4px 10px; margin-left:auto;">복사</button>
+<div id="detailModal" style="display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(30,40,60,0.18); z-index:20000; justify-content:center; align-items:flex-start;">
+    <div style="background:#fff; border-radius:14px; max-width:760px; width:94vw; margin:70px auto 0; padding:30px 20px 18px; box-shadow:0 6px 40px rgba(0,0,0,0.16); position:relative;">
+      <button onclick="closeDetailModal()" style="position:absolute; right:16px; top:13px; font-size:20px; background:none; border:none; cursor:pointer;">×</button>
+      <h3 style="font-size:19px; margin:0 0 15px 0; color:#1b85db; font-weight:800;">기타 학생 상세검색</h3>
+      <div style="max-height:60vh; overflow-y:auto;">
+        <div id="detailCharWrap" style="margin:14px 0 10px 0; display:flex; flex-wrap:wrap; gap:10px; justify-content:flex-start;"></div>
+        <div id="otherCharWrap" style="margin:16px 0 5px 0; display:flex; flex-wrap:wrap; gap:10px; justify-content:flex-start;"></div>
       </div>
-      <div id="modalAccountChars" style="display:flex; flex-wrap:wrap; gap:13px; justify-content:center; align-items:flex-start; margin-top:6px;"></div>
+      <div style="text-align:center; margin-top:13px;">
+        <button onclick="closeDetailModal()" style="background:#1b85db; color:white; padding:7px 28px; border:none; border-radius:8px; font-size:15px;">닫기</button>
+      </div>
     </div>
-</div>
+  </div>
 
 <script>
 
