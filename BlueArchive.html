@@ -426,7 +426,7 @@ body {
         <h3 style="margin:0; font-size:20px; color:#1b85db; font-weight:800;" id="modalAccountNum">계정 상세</h3>
         <span style="color:#1b85db; font-size:16px; font-weight:700;" id="modalAccountPrice"></span>
         <span id="modalAccountCount" style="margin-left:8px; color:#34495e; font-size:15px; font-weight:600;"></span>
-        <button id="modalCopyBtn" class="copy-btn" style="padding:4px 10px; margin-left:30px;">복사</button>
+        <button id="modalCopyBtn" class="copy-btn" style="padding:4px 10px; margin-left:auto;">복사</button>
       </div>
       <div id="modalAccountChars"
         style="display:flex; flex-wrap:wrap; gap:13px; justify-content:center; align-items:flex-start; margin-top:6px; max-height:54vh; overflow-y:auto;">
@@ -476,6 +476,7 @@ const characterData = [
             { name: '드아코', grade: '1티어', feature: '한정' },
             { name: '나기사', grade: '1티어', feature: '한정' },
             { name: '아마리', grade: '1티어', feature: '한정' },
+            { name: '세이아', grade: '1티어', feature: '한정' },
             { name: '온도카', grade: '1티어', feature: '' },
             { name: '코하루', grade: '1티어', feature: '' },
             { name: '이오리', grade: '1티어', feature: '' },
@@ -3873,7 +3874,7 @@ function copyAccount(accountNum) {
 const priorityList = [
   '수시노', '미카', '수나코', '드히나', '임시노', '쿠로코', '키사키', '아코', '히마리', '뉴요코', '캠하레', '와카모',
   '운유카', '뉴우카', '이로하', '체리노', '슌', '우이', '코코나', '수로코', '드아루', '뉴츠키', '수즈나', '수우이',
-  '마코토', '드아코', '나기사', '아마리', '온도카', '코하루', '이오리', '히비키', '메리스', '수야코', '수사키', '미네',
+  '마코토', '드아코', '나기사', '아마리', '세이아', '온도카', '코하루', '이오리', '히비키', '메리스', '수야코', '수사키', '미네',
   '수즈사', '운마리', '뉴루나', '뉴아루', '수나타'
 ];
 
@@ -3902,7 +3903,7 @@ function sortCharactersByPriority(chars) {
     const priorityList = [
         '수시노', '미카', '수나코', '드히나', '임시노', '쿠로코', '키사키', '아코', '히마리', '뉴요코', '캠하레', '와카모',
         '운유카', '뉴우카', '이로하', '체리노', '슌', '우이', '코코나', '수로코', '드아루', '뉴츠키', '수즈나', '수우이',
-        '마코토', '드아코', '나기사', '아마리', '온도카', '코하루', '이오리', '히비키', '메리스', '수야코', '수사키', '미네',
+        '마코토', '드아코', '나기사', '아마리', '세이아', '온도카', '코하루', '이오리', '히비키', '메리스', '수야코', '수사키', '미네',
         '수즈사', '운마리', '뉴루나', '뉴아루', '수나타'
     ];
     const priority = Object.fromEntries(priorityList.map((name, idx) => [name, idx]));
