@@ -135,9 +135,10 @@ body {
 
 .result-character-card img {
     width: 60px;
-    height: 60px;
+    height: 72px; /* 세로 20% 정도 길게 */
     border-radius: 10px;
     border: 3px solid gray;
+    object-fit: cover;
 }
 
 #pagination {
@@ -203,11 +204,12 @@ body {
 
 .character-card img {
     width: 60px;
-    height: 60px;
+    height: 72px; /* 세로 20% 정도 길게 */
     border-radius: 10px;
     border: 3px solid gray;
     transition: all 0.3s ease;
     cursor: pointer;
+    object-fit: cover;
 }
 
 .character-card:hover {
@@ -276,7 +278,7 @@ body {
 
   .character-card img {
     width: 52px;
-    height: 52px;
+    height: 62px; /* 세로 약 20% 증가 */
   }
 
   .character-name {
@@ -297,7 +299,7 @@ body {
 
   .result-character-card img {
     width: 52px;
-    height: 52px;
+    height: 62px; /* 세로 약 20% 증가 */
   }
 
   .intro {
@@ -381,16 +383,16 @@ body {
     </a>
 </div>  
 
-<h2>학생 선택 후 계정 찾기</h2>
+<h2>캐릭터 선택 후 계정 찾기</h2>
 
 <div id="characters"></div>
 
 <div style="margin:12px 0;">
-    <button id="detailSearchBtn" style="background:#adadad; color:white; padding:7px 28px; border:none; border-radius:8px; font-size:18px;">기타학생보기</button>
+    <button id="detailSearchBtn" style="background:#adadad; color:white; padding:7px 28px; border:none; border-radius:8px; font-size:18px;">기타캐릭터보기</button>
 </div>
 
 <div id="selected-info">
-    선택한 학생: <span id="selected-count">0</span>개
+    선택한 캐릭터: <span id="selected-count">0</span>개
     <button onclick="clearSelection()" style="margin-left:10px;">선택 초기화</button>
 </div>
 <div id="selected-list"></div>
@@ -418,7 +420,7 @@ body {
 <div id="detailModal" style="display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(30,40,60,0.18); z-index:20000; justify-content:center; align-items:flex-start;">
     <div style="background:#fff; border-radius:14px; max-width:900px; width:96vw; margin:70px auto 0; padding:30px 20px 18px; box-shadow:0 6px 40px rgba(0,0,0,0.16); position:relative;">
       <button onclick="closeDetailModal()" style="position:absolute; right:16px; top:13px; font-size:20px; background:none; border:none; cursor:pointer;">×</button>
-      <h3 style="font-size:19px; margin:0 0 15px 0; color:#1b85db; font-weight:800;">기타 학생 상세검색</h3>      
+      <h3 style="font-size:19px; margin:0 0 15px 0; color:#1b85db; font-weight:800;">기타 캐릭터 상세검색</h3>      
       <div style="max-height:54vh; overflow-y:auto; margin-bottom:22px;">
         <div id="detailCharWrap" style="margin:14px 0 10px 0; display:flex; flex-wrap:wrap; gap:10px; justify-content:flex-start;"></div>
         <div id="otherCharWrap" style="margin:16px 0 5px 0; display:flex; flex-wrap:wrap; gap:10px; justify-content:flex-start;"></div>
@@ -456,7 +458,7 @@ let currentPage = 1;
 const pageSize = 20;
 let currentFilteredAccounts = [];
 
-// 선택된 학생: { '미카': 2, '수시노': 1 } 이런 식으로 카운트 저장
+// 선택된 캐릭터: { '미카': 2, '수시노': 1 } 이런 식으로 카운트 저장
 let selectedChars = {};
 
 function getSelectedTotalCount() {
@@ -492,10 +494,10 @@ const gradeBorderColors = {
 };
 
 const accounts = [
-  {"price": 1.7, "num": "M1_2511191501", "chars": ["칼리페","린","오를레아","트리사","아미르","루카스","미카","오웬","레이","트리사","레이"] },
+  {"price": 1.7, "num": "M1_2511191501", "chars": ["칼리페", "린", "오를레아", "트리사", "트리사", "아미르", "루카스", "미카", "오웬", "레이", "레이"] },
 ];
 
-// ★★★ 학생 우선순위 리스트 추가 ★★★
+// ★★★ 캐릭터 우선순위 리스트 추가 ★★★
 const priorityList = [
   '메이린', '베로니카', '휴고', '칼리페', '레노아', '하루', '카일론', '마그나', '린', '유키', '루크', '오를레아'
 ];
@@ -511,7 +513,7 @@ function sortCharactersByPriority(chars) {
   });
 }
 
-// 학생 선택: 클릭할 때마다 카운트 +1
+// 캐릭터 선택: 클릭할 때마다 카운트 +1
 function toggleCharacter(charName, imgElement, wrapperElement) {
     if (!selectedChars[charName]) {
         selectedChars[charName] = 0;
@@ -638,21 +640,17 @@ function renderAccounts(accountsArray) {
             <button class="copy-btn" onclick="copyAccount('${acc.num}')">복사</button>
             <span class="account-num">${acc.num}</span>
             <span class="account-price">가격: ${acc.price}만</span>
-            <span style="margin-left:15px; color:#34495e; font-size:15px; font-weight:600;">총 학생 ${acc.chars.length}명</span>
+            <span style="margin-left:15px; color:#34495e; font-size:15px; font-weight:600;">총 캐릭터 ${acc.chars.length}명</span>
             <button class="copy-btn" style="background:#34495e; margin-left:auto;" onclick="openAccountModal('${acc.num}')">상세보기</button>
         </div>`;
 
         const charGrid = document.createElement('div');
         charGrid.className = 'character-list';
 
-        const tierCharacterNames = characterData.map(c => c.name);
-
-        // 중복 포함 그대로 두되, 티어표에 있거나 선택된 학생만 필터
-        const filteredChars = acc.chars.filter(name => {
-            const inTier = tierCharacterNames.includes(name);
-            const inSelected = selectedChars[name] && selectedChars[name] > 0;
-            return inTier || inSelected;
-        });
+        // ★ 여기서부터 변경 ★
+        // 예전: 티어표에 있거나 선택된 캐릭터만 필터
+        // 이제: 계정에 있는 캐릭터 전부 표시(기타캐릭터 포함)
+        const filteredChars = acc.chars.slice();  // 전체 사용
 
         const sortedChars = sortCharactersByPriority(filteredChars);
 
@@ -810,7 +808,7 @@ function openAccountModal(accountNum) {
 
     document.getElementById('modalAccountNum').innerText = `계정번호: ${accountNum}`;
     document.getElementById('modalAccountPrice').innerText = `가격: ${acc.price}만`;
-    document.getElementById('modalAccountCount').innerText = `총 학생 ${acc.chars.length}명`;
+    document.getElementById('modalAccountCount').innerText = `총 캐릭터 ${acc.chars.length}명`;
 
     const copyBtn = document.getElementById('modalCopyBtn');
     copyBtn.onclick = function() {
@@ -833,7 +831,7 @@ function openAccountModal(accountNum) {
         img.src = `/static/images2/${name}.png`;
         img.style.border = `2px solid ${gradeBorderColors[getGradeByName(name)] || 'gray'}`;
         img.style.width = "48px";
-        img.style.height = "48px";
+        img.style.height = "60px"; // 세로 조금 더 길게
 
         const nameDiv = document.createElement('div');
         nameDiv.className = 'character-name';
@@ -864,7 +862,7 @@ document.getElementById('detailSearchBtn').onclick = function() {
 };
 
 function openDetailModal() {
-    // accounts 전체 학생 이름 모으기
+    // accounts 전체 캐릭터 이름 모으기
     let allStudentSet = new Set();
     accounts.forEach(acc => acc.chars.forEach(name => allStudentSet.add(name)));
     const allStudentArr = Array.from(allStudentSet);
@@ -892,7 +890,7 @@ function makeDetailCharCard(name) {
     const img = document.createElement('img');
     img.src = `/static/images2/${name}.png`;
     img.style.width = '50px';
-    img.style.height = '50px';
+    img.style.height = '60px'; // 세로 조금 더 길게
     img.style.borderRadius = '10px';
     img.style.border = `3px solid ${gradeBorderColors[getGradeByName(name)] || '#bbb'}`;
 
