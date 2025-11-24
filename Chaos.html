@@ -587,9 +587,29 @@ function updateSelectedInfo() {
             const img = document.createElement('img');
             img.src = `/static/images2/${name}.png`;
             img.title = `${name} x${cnt}`;
+            img.style.width = "40px";
+            img.style.height = "52px";
+
+            // ▼ 선택한 캐릭터 리스트에서 클릭 시 1개 감소
+            img.onclick = function () {
+                removeSelectedCharacter(name);
+            };
+
             selectedList.appendChild(img);
         }
     });
+}
+
+function removeSelectedCharacter(name) {
+    if (!selectedChars[name]) return;
+
+    selectedChars[name] -= 1;
+    if (selectedChars[name] <= 0) {
+        delete selectedChars[name];
+    }
+
+    updateSelectedInfo();
+    drawCharacters();   // 캐릭터 카드 하이라이트 상태도 다시 반영
 }
 
 function clearSelection() {
@@ -647,13 +667,19 @@ function drawCharacters() {
             img.src = `/static/images2/${c.name}.png`;
             img.style.borderColor = gradeBorderColors[c.grade] || 'gray';
             img.onclick = function() {
-                toggleCharacter(c.name, img, wrapper);
+            toggleCharacter(c.name, img, wrapper);
             };
+
+            // ▼ 현재 선택 개수 > 0이면 하이라이트 유지
+            if (selectedChars[c.name] && selectedChars[c.name] > 0) {
+                wrapper.classList.add('selected');
+                img.classList.add('selected');
+            }
 
             const nameDiv = document.createElement('div');
             nameDiv.className = 'character-name';
             nameDiv.innerText = c.name;
-
+    
             const featureDiv = document.createElement('div');
             featureDiv.className = 'character-feature';
             featureDiv.innerText = c.feature;
@@ -663,6 +689,7 @@ function drawCharacters() {
             wrapper.appendChild(featureDiv);
             grid.appendChild(wrapper);
         });
+
 
         section.appendChild(title);
         section.appendChild(grid);
