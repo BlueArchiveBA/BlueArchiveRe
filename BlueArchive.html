@@ -239,6 +239,39 @@ body {
     border-color: green;
 }
 
+.notice-tier{
+  max-width: 720px;
+  margin: 6px auto 12px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #555;
+  background: rgba(255,255,255,0.7);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 10px;
+  line-height: 1.4;
+}
+
+.main-notice {
+  max-width: 820px;
+  margin: 18px auto 10px;
+  padding: 12px 14px;
+  background: #fff6f6;
+  border: 1px solid #ffd1d1;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+}
+.main-notice strong {
+  color: #d60000;
+}
+.main-notice a {
+  color: #1b85db;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+
 /* 모바일 대응 */
 @media (max-width: 768px) {
   body {
@@ -364,9 +397,15 @@ body {
     블루아카이브 <strong>한국서버</strong> 리세계를 판매하고 있습니다.<br>
     직접 만들어 출석체크, 뽑기, 1-1소탕을 진행한 <strong>국산계정</strong>입니다.<br>
     캐릭획득순서, 가이드미션, 1-1클리어, 이벤트다시보기 <strong>모든 인증 가능</strong>합니다!<br>
-    상담은 <strong>아이디팜 판매자와 채팅하기</strong>로 부탁드립니다.<br><br>
+    상담은 <strong>아이디팜 판매자와 실시간 채팅</strong>으로 부탁드립니다.<br><br>
     <strong style="color:rgb(255, 145, 0);">※ 계정구매 시 쿠폰 발급 이벤트 진행중! (구매금액의 15% 상당)</strong><br><br>
     <strong style="color:red;">※ 늦은 밤이나 새벽시간대 답변이 없을 수 있습니다. 일어나는 즉시 답변드리겠습니다.</strong>
+    <div class="main-notice">
+        ⚠️ <strong>[중요]</strong> 계정 연동 전 <strong>절대 로그인하지 마세요.</strong><br>
+        최초 접속 시 자동 연동되어 이후 연동이 불가능할 수 있습니다.<br>
+        자세한 내용은 <a href="/guide/trade.html" target="_blank">거래 가이드</a>를 참고해 주세요.
+    </div>
+      
     
 </div>
 
@@ -380,6 +419,9 @@ body {
     <a href="/guide/coupon-guide.html"  target="_blank" rel="noopener" class="quick-btn">
       🎁 쿠폰 가이드
     </a>
+    <a href="https://forum.nexon.com/bluearchive/board_view?board=1072&thread=2984196"  target="_blank" rel="noopener" class="quick-btn">
+      🔐 스팀 계정 로그인 가이드
+    </a>
 </div>  
 
 <h2>학생 선택 후 계정 찾기</h2>
@@ -389,6 +431,11 @@ body {
 <div style="margin:12px 0;">
     <button id="detailSearchBtn" style="background:#adadad; color:white; padding:7px 28px; border:none; border-radius:8px; font-size:18px;">기타학생보기</button>
 </div>
+
+<div class="notice-tier">
+    ※ 계정 가격은 티어표 기준 학생만 반영되며, ‘기타학생보기’에 포함된 학생은 가격 산정에 포함되지 않습니다.
+</div>
+  
 
 <div id="selected-info">
     선택한 학생: <span id="selected-count">0</span>개
@@ -3545,6 +3592,10 @@ function updateSelectedInfo() {
         const img = document.createElement('img');
         img.src = `/static/images/${name}.png`;
         img.title = name;
+        img.onclick = function () {
+            removeSelectedCharacter(name);
+        };
+
         selectedList.appendChild(img);
     });
 }
@@ -3976,6 +4027,14 @@ function makeDetailCharCard(name) {
     wrapper.appendChild(nameDiv);
 
     return wrapper;
+}
+
+function removeSelectedCharacter(name) {
+    // 배열에서 해당 캐릭터 제거
+    selectedChars = selectedChars.filter(c => c !== name);
+
+    updateSelectedInfo();
+    drawCharacters(); // 위 캐릭터 카드 선택 표시 동기화
 }
 
 // 모달 닫기 함수
