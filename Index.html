@@ -436,9 +436,6 @@ body {
 
 <div id="characters"></div>
 
-<div style="margin:12px 0;">
-    <button id="detailSearchBtn" style="background:#adadad; color:white; padding:7px 28px; border:none; border-radius:8px; font-size:18px;">기타학생보기</button>
-</div>
 
 <div id="selected-info">
     선택한 학생: <span id="selected-count">0</span>개
@@ -466,20 +463,20 @@ body {
   
 <div id="spinner">🔄 로딩 중...</div>
 
-<div id="detailModal" style="display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(30,40,60,0.18); z-index:20000; justify-content:center; align-items:flex-start;">
+<div id="moreModal" style="display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(30,40,60,0.18); z-index:20000; justify-content:center; align-items:flex-start;">
     <div style="background:#fff; border-radius:14px; max-width:900px; width:96vw; margin:70px auto 0; padding:30px 20px 18px; box-shadow:0 6px 40px rgba(0,0,0,0.16); position:relative;">
-      <button onclick="closeDetailModal()" style="position:absolute; right:16px; top:13px; font-size:20px; background:none; border:none; cursor:pointer;">×</button>
-      <h3 style="font-size:19px; margin:0 0 15px 0; color:#1b85db; font-weight:800;">기타 학생 상세검색</h3>      
+      <button onclick="closeMoreModal()" style="position:absolute; right:16px; top:13px; font-size:20px; background:none; border:none; cursor:pointer;">×</button>
+      <h3 id="moreModalTitle" style="font-size:19px; margin:0 0 15px 0; color:#1b85db; font-weight:800;">더보기</h3>
+  
       <div style="max-height:54vh; overflow-y:auto; margin-bottom:22px;">
-        <div id="detailCharWrap" style="margin:14px 0 10px 0; display:flex; flex-wrap:wrap; gap:10px; justify-content:flex-start;"></div>
-        <div id="otherCharWrap" style="margin:16px 0 5px 0; display:flex; flex-wrap:wrap; gap:10px; justify-content:flex-start;"></div>
+        <div id="moreCharWrap" style="margin:14px 0 10px 0; display:flex; flex-wrap:wrap; gap:10px; justify-content:flex-start;"></div>
       </div>
+  
       <div style="width:100%; text-align:center; position:sticky; bottom:0; background:#fff; padding-top:8px; padding-bottom:2px;">
-        <button onclick="closeDetailModal()" style="background:#1b85db; color:white; padding:8px 36px; border:none; border-radius:8px; font-size:16px; font-weight:bold;">선택 완료</button>
+        <button onclick="closeMoreModal()" style="background:#1b85db; color:white; padding:8px 36px; border:none; border-radius:8px; font-size:16px; font-weight:bold;">닫기</button>
       </div>
     </div>
-</div>
-    
+</div>    
 
 <div id="summary"></div>
 <div id="result"></div>
@@ -514,50 +511,76 @@ window.onload = function() {
 };
 
 const characterData = [
-            { name: '수시노', grade: '0티어', feature: 'FES' },
-            { name: '미카', grade: '0티어', feature: 'FES' },
-            { name: '수나코', grade: '0티어', feature: 'FES' },
-            { name: '드히나', grade: '0티어', feature: 'FES' },
-            { name: '임시노', grade: '0티어', feature: 'FES' },
-            { name: '쿠로코', grade: '0티어', feature: 'FES' },
-            { name: '리오', grade: '0티어', feature: 'FES' },
-            { name: '교네루', grade: '0티어', feature: 'FES' },
-            { name: '수기사', grade: '0티어', feature: 'FES' },
-            { name: '수미카', grade: '0티어', feature: 'FES' },            
-            { name: '키사키', grade: '0티어', feature: '' },
-            { name: '수로코', grade: '0티어', feature: '' },
-            { name: '와카모', grade: '0.5티어', feature: 'FES' },
-            { name: '뉴우카', grade: '0.5티어', feature: '한정' },
-            { name: '아마리', grade: '0.5티어', feature: '한정' },
-            { name: '세이아', grade: '0.5티어', feature: '한정' },
-            { name: '수이아', grade: '0.5티어', feature: '한정' },
-            { name: '캠하레', grade: '0.5티어', feature: '' },
-            { name: '드아루', grade: '0.5티어', feature: '' },
-            { name: '코코나', grade: '0.5티어', feature: '' },
-            { name: '운유카', grade: '1티어', feature: '한정' },
-            { name: '히카리', grade: '1티어', feature: '한정' },
-            { name: '노조미', grade: '1티어', feature: '한정' },
-            { name: '나기사', grade: '1티어', feature: '한정' },
-            { name: '뉴츠키', grade: '1티어', feature: '한정' },          
-            { name: '아코', grade: '1티어', feature: '' },
-            { name: '히마리', grade: '1티어', feature: '' },
-            { name: '뉴요코', grade: '1티어', feature: '' },
-            { name: '우이', grade: '1티어', feature: '' },
-            { name: '슌', grade: '1티어', feature: '' },
-            { name: '체리노', grade: '1티어', feature: '' },
-            { name: '히나타', grade: '1티어', feature: '' },
-            { name: '수즈나', grade: '2티어', feature: '한정' },
-            { name: '뉴루나', grade: '2티어', feature: '한정' },
-            { name: '드아코', grade: '2티어', feature: '한정' },
-            { name: '수우이', grade: '2티어', feature: '한정' },
-            { name: '수요리', grade: '2티어', feature: '한정' },
+            { name: '수시노', grade: 'FES', feature: 'FES' },
+            { name: '미카', grade: 'FES', feature: 'FES' },
+            { name: '수나코', grade: 'FES', feature: 'FES' },
+            { name: '드히나', grade: 'FES', feature: 'FES' },
+            { name: '임시노', grade: 'FES', feature: 'FES' },
+            { name: '쿠로코', grade: 'FES', feature: 'FES' },
+            { name: '리오', grade: 'FES', feature: 'FES' },
+            { name: '교네루', grade: 'FES', feature: 'FES' },
+            { name: '수기사', grade: 'FES', feature: 'FES' },
+            { name: '수미카', grade: 'FES', feature: 'FES' },            
+            { name: '와카모', grade: 'FES', feature: 'FES' },
+            
+            { name: '뉴우카', grade: '한정', feature: '한정' },
+            { name: '운유카', grade: '한정', feature: '한정' },
+            { name: '아마리', grade: '한정', feature: '한정' },
+            { name: '세이아', grade: '한정', feature: '한정' },
+            { name: '수이아', grade: '한정', feature: '한정' },
+            { name: '히카리', grade: '한정', feature: '한정' },
+            { name: '노조미', grade: '한정', feature: '한정' },
+            { name: '드아코', grade: '한정', feature: '한정' },
+            { name: '아쿠라코', grade: '한정', feature: '한정' },
+            { name: '나기사', grade: '한정', feature: '한정' },
+            { name: '뉴츠키', grade: '한정', feature: '한정' },
+            { name: '수우이', grade: '한정', feature: '한정' },
+            { name: '마코토', grade: '한정', feature: '한정' },
+            { name: '교스나', grade: '한정', feature: '한정' },
+            { name: '싸오리', grade: '한정', feature: '한정' },
+            { name: '수즈나', grade: '한정', feature: '한정' },
+            { name: '수요리', grade: '한정', feature: '한정' },
+            { name: '뉴루나', grade: '한정', feature: '한정' },
+            { name: '토키', grade: '한정', feature: '한정' },
+            { name: '운마리', grade: '한정', feature: '한정' },
+            { name: '수나타', grade: '한정', feature: '한정' },
+            { name: '밴즈사', grade: '한정', feature: '한정' },
+            { name: '밴시미', grade: '한정', feature: '한정' },
+            { name: '수스미', grade: '한정', feature: '한정' },
+            { name: '수히나', grade: '한정', feature: '한정' },
+            { name: '수오리', grade: '한정', feature: '한정' },
+            { name: '뉴아루', grade: '한정', feature: '한정' },
+            { name: '바네루', grade: '한정', feature: '한정' },            
+            { name: '바카린', grade: '한정', feature: '한정' },
+            { name: '수즈사', grade: '한정', feature: '한정' },
+            { name: '수시로', grade: '한정', feature: '한정' },
+            { name: '수치세', grade: '한정', feature: '한정' },
+      
+            { name: '키사키', grade: '통상', feature: '' },
+            { name: '캠하레', grade: '통상', feature: '' },
+            { name: '수로코', grade: '통상', feature: '' },
+            { name: '드아루', grade: '통상', feature: '' },
+            { name: '뉴요코', grade: '통상', feature: '' },
+            { name: '코코나', grade: '통상', feature: '' },
+            { name: '아코', grade: '통상', feature: '' },
+            { name: '히마리', grade: '통상', feature: '' },
+            { name: '수칸나', grade: '통상', feature: '' },
+            { name: '슌', grade: '통상', feature: '' },
+            { name: '우이', grade: '통상', feature: '' },
+            { name: '이로하', grade: '통상', feature: '' },
+            { name: '체리노', grade: '통상', feature: '' },
+            { name: '히나타', grade: '통상', feature: '' },
+            { name: '카노에', grade: '통상', feature: '' },
+            { name: '카즈사', grade: '통상', feature: '' },
+            { name: '히비키', grade: '통상', feature: '' },
+            { name: '이오리', grade: '통상', feature: '' }
+
 ];
 
 const gradeBorderColors = {
-  "0티어": "rgb(255, 0, 255)",
-  "0.5티어": "rgb(255, 0, 0)",
-  "1티어": "rgb(255, 153, 0)",
-  "2티어": "rgb(153, 0, 255)"
+  "FES": "rgb(255, 0, 255)",
+  "한정": "rgb(255, 0, 0)",
+  "통상": "rgb(255, 153, 0)"
 };
 
 const accounts = [
@@ -3407,11 +3430,11 @@ function clearSelection() {
 
 function drawCharacters() {
     const tierColors = {
-      '0티어': 'rgb(255, 0, 255)',
-      '0.5티어': 'rgb(255, 0, 0)',
-      '1티어': 'rgb(255, 153, 0)',
-      '2티어': 'rgb(153, 0, 255)'
+        'FES': 'rgb(255, 0, 255)',
+        '한정': 'rgb(255, 0, 0)',
+        '통상': 'rgb(255, 153, 0)',
     };
+
     const charactersDiv = document.getElementById('characters');
     charactersDiv.innerHTML = '';
 
@@ -3421,27 +3444,22 @@ function drawCharacters() {
         grouped[c.grade].push(c);
     });
 
-    const sortedTiers = Object.keys(grouped).sort((a, b) => {
-        const parseTier = s => parseFloat(s.replace('티어', '')) || 0;
-        return parseTier(a) - parseTier(b);
-    });
+    // 원하는 순서로 고정
+    const sortedGrades = ['FES', '한정', '통상'].filter(g => grouped[g]);
 
-    sortedTiers.forEach(tier => {
+    sortedGrades.forEach(grade => {
         const section = document.createElement('div');
         section.style.marginBottom = '0px';
 
         const title = document.createElement('div');
-        title.innerText = tier;
+        title.innerText = grade;
         title.style.fontSize = '20px';
         title.style.fontWeight = 'bold';
         title.style.textAlign = 'left';
         title.style.margin = '10px 0 5px 10px';
-        title.style.color = tierColors[tier] || '#000'; // 글자색
-        title.style.borderLeft = `6px solid ${tierColors[tier] || '#000'}`; // 왼쪽 테두리 강조
+        title.style.color = tierColors[grade] || '#000';
+        title.style.borderLeft = `6px solid ${tierColors[grade] || '#000'}`;
         title.style.paddingLeft = '8px';
-
-        
-
 
         const grid = document.createElement('div');
         grid.style.display = 'flex';
@@ -3449,35 +3467,26 @@ function drawCharacters() {
         grid.style.gap = '10px';
         grid.style.justifyContent = 'center';
 
-        grouped[tier].forEach(c => {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'character-card';
+        const list = grouped[grade] || [];
 
-            const img = document.createElement('img');
-            img.src = `/static/images/${c.name}.png`;
-            img.style.borderColor = gradeBorderColors[c.grade] || 'gray';
-            img.onclick = function() {
-                toggleCharacter(c.name, img, wrapper);
-            };
+        // 한정/통상은 15개만 표시
+        const visible = (grade === '한정' || grade === '통상') ? list.slice(0, 15) : list;
 
-            const nameDiv = document.createElement('div');
-            nameDiv.className = 'character-name';
-            nameDiv.innerText = c.name;
-
-            const featureDiv = document.createElement('div');
-            featureDiv.className = 'character-feature';
-            featureDiv.innerText = c.feature;
-
-            wrapper.appendChild(img);
-            wrapper.appendChild(nameDiv);
-            wrapper.appendChild(featureDiv);
-            grid.appendChild(wrapper);
+        visible.forEach(c => {
+            grid.appendChild(makeSelectableCharCard(c.name, c.grade, c.feature));
         });
+        
+        // 한정/통상은 15개까지만 + 15번째 뒤에 "더보기 카드"를 그리드에 끼워 넣기
+        if ((grade === '한정' || grade === '통상') && list.length > 15) {
+            const remainCount = list.length - 15;
+            grid.appendChild(makeMoreCard(grade, remainCount));
+        }
+
 
         section.appendChild(title);
         section.appendChild(grid);
         charactersDiv.appendChild(section);
-    });    
+    });
 }
 
 function renderAccounts(accountsArray) {
@@ -3841,6 +3850,137 @@ function closeDetailModal() {
     document.getElementById('detailModal').style.display = 'none';
 }
 
+function makeSelectableCharCard(name, grade, feature) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'character-card';
+
+    const img = document.createElement('img');
+    img.src = `/static/images/${name}.png`;
+    img.style.borderColor = gradeBorderColors[grade] || 'gray';
+
+    // 선택 상태 반영
+    if (selectedChars.includes(name)) {
+        wrapper.classList.add('selected');
+        img.classList.add('selected');
+    }
+
+    img.onclick = function() {
+        toggleCharacter(name, img, wrapper);
+        // 토글 후 선택표시 동기화
+        if (selectedChars.includes(name)) {
+            wrapper.classList.add('selected');
+            img.classList.add('selected');
+        } else {
+            wrapper.classList.remove('selected');
+            img.classList.remove('selected');
+        }
+    };
+
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'character-name';
+    nameDiv.innerText = name;
+
+    const featureDiv = document.createElement('div');
+    featureDiv.className = 'character-feature';
+    featureDiv.innerText = feature || '';
+
+    wrapper.appendChild(img);
+    wrapper.appendChild(nameDiv);
+    wrapper.appendChild(featureDiv);
+
+    return wrapper;
+}
+
+function openMoreModal(grade) {
+    const titleMap = { '한정': '한정 학생 더보기', '통상': '통상 학생 더보기', 'FES': 'FES 더보기' };
+    document.getElementById('moreModalTitle').innerText = titleMap[grade] || '더보기';
+
+    const wrap = document.getElementById('moreCharWrap');
+    wrap.innerHTML = '';
+
+    // 해당 grade 전체를 모달에 출력(=15개 이후 나머지)
+    const all = characterData.filter(c => c.grade === grade);
+    const remain = (grade === '한정' || grade === '통상') ? all.slice(15) : all; // FES는 필요시 전체
+
+    remain.forEach(c => {
+        wrap.appendChild(makeSelectableCharCard(c.name, c.grade, c.feature));
+    });
+
+    // ✅ 통상 더보기에는 "미분류 학생(계정에만 있는 학생)"도 전부 포함
+    if (grade === '통상') {
+        const unlisted = getUnlistedStudents();
+        unlisted.forEach(name => {
+            // 미분류 학생은 통상으로 취급해서 테두리/색상 동일 적용
+            wrap.appendChild(makeSelectableCharCard(name, '통상', ''));
+        });
+    }
+
+    document.getElementById('moreModal').style.display = 'flex';
+}
+
+function closeMoreModal() {
+    document.getElementById('moreModal').style.display = 'none';
+}
+
+function makeMoreCard(grade, remainCount) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'character-card';
+    wrapper.style.cursor = 'pointer';
+
+    const box = document.createElement('div');
+    box.style.width = '60px';
+    box.style.height = '60px';
+    box.style.borderRadius = '10px';
+    box.style.border = `3px dashed ${gradeBorderColors[grade] || '#999'}`;
+    box.style.display = 'flex';
+    box.style.alignItems = 'center';
+    box.style.justifyContent = 'center';
+    box.style.userSelect = 'none';
+
+    // ✅ 가운데 + 아이콘
+    const plus = document.createElement('div');
+    plus.innerText = '+';
+    plus.style.fontSize = '34px';
+    plus.style.fontWeight = '900';
+    plus.style.lineHeight = '1';
+    plus.style.color = gradeBorderColors[grade] || '#333';
+    plus.style.transform = 'translateY(-1px)';
+
+    box.appendChild(plus);
+
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'character-name';
+    nameDiv.innerText = '더보기';
+
+    const featureDiv = document.createElement('div');
+    featureDiv.className = 'character-feature';
+    featureDiv.innerText = `+${remainCount}`;
+
+    wrapper.onclick = () => openMoreModal(grade);
+
+    wrapper.appendChild(box);
+    wrapper.appendChild(nameDiv);
+    wrapper.appendChild(featureDiv);
+
+    return wrapper;
+}
+
+function getUnlistedStudents() {
+    // accounts에 등장하는 모든 학생
+    const accSet = new Set();
+    accounts.forEach(acc => acc.chars.forEach(name => accSet.add(name)));
+
+    // characterData(=FES/한정/통상에 등록된 학생) 전체
+    const listedSet = new Set(characterData.map(c => c.name));
+
+    // 계정에는 있는데, characterData에는 없는 학생만
+    const unlisted = Array.from(accSet).filter(name => !listedSet.has(name));
+
+    // 보기 좋게 가나다 정렬(원하면 삭제 가능)
+    unlisted.sort((a, b) => a.localeCompare(b, 'ko'));
+
+    return unlisted;
+}
     
 </script>
 
