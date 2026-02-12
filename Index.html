@@ -561,6 +561,7 @@ const characterData = [
             { name: '드아루', grade: '통상', feature: '' },
             { name: '뉴요코', grade: '통상', feature: '' },
             { name: '코코나', grade: '통상', feature: '' },
+            { name: '미네', grade: '통상', feature: '' },
             { name: '아코', grade: '통상', feature: '' },
             { name: '히마리', grade: '통상', feature: '' },
             { name: '수칸나', grade: '통상', feature: '' },
@@ -3961,15 +3962,10 @@ function makeMoreCard(grade, remainCount) {
     nameDiv.className = 'character-name';
     nameDiv.innerText = '더보기';
 
-    const featureDiv = document.createElement('div');
-    featureDiv.className = 'character-feature';
-    featureDiv.innerText = `+${remainCount}`;
-
     wrapper.onclick = () => openMoreModal(grade);
 
     wrapper.appendChild(box);
     wrapper.appendChild(nameDiv);
-    wrapper.appendChild(featureDiv);
 
     return wrapper;
 }
