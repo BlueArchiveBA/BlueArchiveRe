@@ -3508,17 +3508,24 @@ function renderAccounts(accountsArray) {
         const charGrid = document.createElement('div');
         charGrid.className = 'character-list';
 
-        const tierCharacterNames = characterData.map(c => c.name);
+        const listedSet = new Set(characterData.map(c => c.name));
         const uniqueChars = [...new Set(acc.chars)];
-        
-        const filteredChars = uniqueChars.filter(
-            name => tierCharacterNames.includes(name) || selectedChars.includes(name)
-            );
-            const sortedChars = sortCharactersByPriority(filteredChars);
+
+        // 1) 등록된 학생(=characterData에 있는 애들)
+        const listedChars = uniqueChars.filter(name => listedSet.has(name));
+
+        // 2) 미분류 학생(=계정에는 있는데 characterData엔 없는 애들)
+        const unlistedChars = uniqueChars.filter(name => !listedSet.has(name));
+
+        // 등록된 학생 먼저: characterData 순서(우선순위)로 정렬
+        const sortedListed = sortCharactersByPriority(listedChars);
+
+        // 최종: 등록된 학생 + 미분류 학생
+        const finalChars = [...sortedListed, ...unlistedChars];
 
         // ✅ 최대 30개만 표시
         const maxShow = 30;
-        const visibleChars = sortedChars.slice(0, maxShow);
+        const visibleChars = finalChars.slice(0, maxShow);
 
         visibleChars.forEach(name => {
             const wrapper = document.createElement('div');
@@ -3628,7 +3635,7 @@ function sortCharactersByPriority(chars) {
 
 function getGradeByName(name) {
     const char = characterData.find(c => c.name === name);
-    return char ? char.grade : '일반';
+    return char ? char.grade : '통상';
 }
 
 function getFeatureByName(name) {
