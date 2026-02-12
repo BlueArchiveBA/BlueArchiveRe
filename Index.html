@@ -544,14 +544,9 @@ const characterData = [
             { name: '토키', grade: '한정', feature: '한정' },
             { name: '운마리', grade: '한정', feature: '한정' },
             { name: '수나타', grade: '한정', feature: '한정' },
-            { name: '밴즈사', grade: '한정', feature: '한정' },
             { name: '밴시미', grade: '한정', feature: '한정' },
             { name: '수스미', grade: '한정', feature: '한정' },
-            { name: '수히나', grade: '한정', feature: '한정' },
-            { name: '수오리', grade: '한정', feature: '한정' },
             { name: '뉴아루', grade: '한정', feature: '한정' },
-            { name: '바네루', grade: '한정', feature: '한정' },            
-            { name: '바카린', grade: '한정', feature: '한정' },
             { name: '수즈사', grade: '한정', feature: '한정' },
             { name: '수시로', grade: '한정', feature: '한정' },
             { name: '수치세', grade: '한정', feature: '한정' },
@@ -570,7 +565,6 @@ const characterData = [
             { name: '이로하', grade: '통상', feature: '' },
             { name: '체리노', grade: '통상', feature: '' },
             { name: '히나타', grade: '통상', feature: '' },
-            { name: '카노에', grade: '통상', feature: '' },
             { name: '카즈사', grade: '통상', feature: '' },
             { name: '히비키', grade: '통상', feature: '' },
             { name: '이오리', grade: '통상', feature: '' }
@@ -3509,7 +3503,6 @@ function renderAccounts(accountsArray) {
             <span class="account-num">${acc.num}</span>
             <span class="account-price">가격: ${acc.price}만</span>
             <span style="margin-left:15px; color:#34495e; font-size:15px; font-weight:600;">총 학생 ${acc.chars.length}명</span>
-            <button class="copy-btn" style="background:#34495e; margin-left:auto;" onclick="openAccountModal('${acc.num}')">상세보기</button>
         </div>`;
 
         const charGrid = document.createElement('div');
@@ -3517,12 +3510,17 @@ function renderAccounts(accountsArray) {
 
         const tierCharacterNames = characterData.map(c => c.name);
         const uniqueChars = [...new Set(acc.chars)];
+        
         const filteredChars = uniqueChars.filter(
-          name => tierCharacterNames.includes(name) || selectedChars.includes(name)
-        );
-        const sortedChars = sortCharactersByPriority(filteredChars);
+            name => tierCharacterNames.includes(name) || selectedChars.includes(name)
+            );
+            const sortedChars = sortCharactersByPriority(filteredChars);
 
-        sortedChars.forEach(name => {
+        // ✅ 최대 23개만 표시
+        const maxShow = 23;
+        const visibleChars = sortedChars.slice(0, maxShow);
+
+        visibleChars.forEach(name => {
             const wrapper = document.createElement('div');
             wrapper.className = 'result-character-card';
 
@@ -3534,19 +3532,24 @@ function renderAccounts(accountsArray) {
                 wrapper.style.backgroundColor = '#cfe9ff';
             }
 
-            const nameDiv = document.createElement('div');
-            nameDiv.className = 'character-name';
-            nameDiv.innerText = name;
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'character-name';
+    nameDiv.innerText = name;
 
-            const featureDiv = document.createElement('div');
-            featureDiv.className = 'character-feature';
-            featureDiv.innerText = getFeatureByName(name);
+    const featureDiv = document.createElement('div');
+    featureDiv.className = 'character-feature';
+    featureDiv.innerText = getFeatureByName(name);
 
-            wrapper.appendChild(img);
-            wrapper.appendChild(nameDiv);
-            wrapper.appendChild(featureDiv);
-            charGrid.appendChild(wrapper);
-        });
+    wrapper.appendChild(img);
+    wrapper.appendChild(nameDiv);
+    wrapper.appendChild(featureDiv);
+    charGrid.appendChild(wrapper);
+});
+
+// ✅ 마지막 칸: "상세보기 카드" (항상 붙이기)
+//   - 이미 23개 미만이어도 마지막에 붙어서 "상세보기"가 항상 눈에 띔
+charGrid.appendChild(makeAccountDetailCard(acc.num));
+
 
         accBox.appendChild(charGrid);
         resultDiv.appendChild(accBox);
@@ -3612,15 +3615,6 @@ function copyAccount(accountNum) {
         .then(() => alert('계정번호 복사 완료!'));
 }
 
-
-// ★★★ 학생 우선순위 리스트 추가 ★★★
-const priorityList = [
-  '수시노', '미카', '수나코', '드히나', '임시노', '쿠로코', '리오', '교네루', '수기사', '수미카', '키사키', '수로코',
-  '와카모', '뉴우카', '아마리', '세이아', '수이아', '캠하레', '드아루', '코코나',
-  '운유카','히카리','노조미','나기사','뉴츠키','아코','히마리','뉴요코','우이','슌','체리노','히나타',
-  '수즈나', '뉴루나', '드아코', '수우이', '수요리'
-];
-
 // ★★★ 계정 데이터 정렬 함수 추가 ★★★
 function sortCharactersByPriority(chars) {
   const priorityMap = {};
@@ -3642,16 +3636,20 @@ function getFeatureByName(name) {
     return char ? char.feature : '';
 }
 
-function sortCharactersByPriority(chars) {
-    const priorityList = [
-        '수시노', '미카', '수나코', '드히나', '임시노', '쿠로코', '리오', '교네루', '수기사', '수미카', '키사키', '수로코',
-        '와카모', '뉴우카', '아마리', '세이아', '수이아', '캠하레', '드아루', '코코나',
-        '운유카','히카리','노조미','나기사','뉴츠키','아코','히마리','뉴요코','우이','슌','체리노','히나타',
-        '수즈나', '뉴루나', '드아코', '수우이', '수요리'
-    ];
-    const priority = Object.fromEntries(priorityList.map((name, idx) => [name, idx]));
-    return [...chars].sort((a, b) => (priority[a] ?? 999) - (priority[b] ?? 999));
+function getPriorityMap() {
+    // characterData에 적힌 순서 그대로 우선순위 생성
+    const map = {};
+    characterData.forEach((c, idx) => {
+        if (map[c.name] === undefined) map[c.name] = idx; // 중복 방지
+    });
+    return map;
 }
+
+function sortCharactersByPriority(chars) {
+    const priority = getPriorityMap();
+    return [...chars].sort((a, b) => (priority[a] ?? 999999) - (priority[b] ?? 999999));
+}
+
 
 function renderPagination(totalPage) {
     const paginationDiv = document.getElementById('pagination');
@@ -3980,6 +3978,51 @@ function getUnlistedStudents() {
     unlisted.sort((a, b) => a.localeCompare(b, 'ko'));
 
     return unlisted;
+}
+
+function makeAccountDetailCard(accountNum) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'result-character-card';
+    wrapper.style.cursor = 'pointer';
+
+    const grade = '통상'; // 디자인 색상은 통상 더보기 느낌으로 고정
+    const color = gradeBorderColors[grade] || '#999';
+
+    const box = document.createElement('div');
+    box.style.width = '60px';
+    box.style.height = '60px';
+    box.style.borderRadius = '10px';
+    box.style.border = `3px dashed ${color}`;
+    box.style.display = 'flex';
+    box.style.alignItems = 'center';
+    box.style.justifyContent = 'center';
+    box.style.userSelect = 'none';
+
+    // 가운데 아이콘(원하면 '+' 대신 '🔎' 로)
+    const icon = document.createElement('div');
+    icon.innerText = '🔎';
+    icon.style.fontSize = '26px';
+    icon.style.fontWeight = '900';
+    icon.style.lineHeight = '1';
+    icon.style.transform = 'translateY(-1px)';
+
+    box.appendChild(icon);
+
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'character-name';
+    nameDiv.innerText = '상세보기';
+
+    const featureDiv = document.createElement('div');
+    featureDiv.className = 'character-feature';
+    featureDiv.innerText = ''; // 아래 +n 같은건 필요 없으면 공백
+
+    wrapper.onclick = () => openAccountModal(accountNum);
+
+    wrapper.appendChild(box);
+    wrapper.appendChild(nameDiv);
+    wrapper.appendChild(featureDiv);
+
+    return wrapper;
 }
     
 </script>
