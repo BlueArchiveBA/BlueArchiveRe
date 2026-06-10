@@ -73,33 +73,36 @@ body {
     background-color: transparent;
     z-index: 10000;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     gap: 15px;
-    padding: 10px;
+    padding: 10px 20px;
     flex-wrap: nowrap;
     flex-direction: row;
 }
 
 #chatButton {
-    padding: 10px 20px;
+    padding: 7px 16px;
     background-color: #FFEB00;
-    color: #000;
-    font-weight: bold;
-    border-radius: 8px;
+    color: #1a3a00;
+    font-weight: 700;
+    border-radius: 20px;
     text-decoration: none;
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-    font-size: 15px;
+    box-shadow: 0 2px 8px rgba(255,220,0,0.5);
+    font-size: 14px;
+    border: 1.5px solid rgba(255,200,0,0.6);
+    white-space: nowrap;
 }
 
 .update-date {
-    font-size: 14px;
-    color: red;
-    background: #fff7f7;
-    padding: 6px 10px;
-    border: 1px solid #ffcccc;
-    border-radius: 6px;
-    font-weight: bold;
+    font-size: 13px;
+    color: #1b85db;
+    background: rgba(27,133,219,0.10);
+    padding: 5px 12px;
+    border: 0.5px solid rgba(27,133,219,0.25);
+    border-radius: 20px;
+    font-weight: 500;
+    white-space: nowrap;
 }
 
 .intro {
@@ -485,15 +488,13 @@ body {
 
   .update-date {
     order: 0;
-    font-size: 13px;
-    padding: 4px 6px;
+    font-size: 12px;
     text-align: center;
   }
 
   #chatButton {
     order: 1;
-    font-size: 14px;
-    padding: 10px 20px;
+    font-size: 13px;
   }
 
   #characters {
@@ -575,7 +576,7 @@ body {
 
 <div id="header-bar">
     <div class="update-date">📅 목록 업데이트 : 2026년 6월 10일</div>
-    <a href="https://open.kakao.com/o/s5B4sxji" target="_blank" id="chatButton">🛋 1:1 상담 바로가기</a>
+    <a href="https://open.kakao.com/o/s5B4sxji" target="_blank" id="chatButton">💬 1:1 상담 바로가기</a>
 </div>
       
 <main style="margin-top: 100px;"></main>
