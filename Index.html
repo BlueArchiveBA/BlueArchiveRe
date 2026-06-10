@@ -232,7 +232,7 @@ body {
 }
 
 .character-name {
-    margin-top: 6px;
+    margin-top: 7px;
     font-size: 12px;
     font-weight: 700;
     color: #333;
@@ -241,10 +241,19 @@ body {
 }
 
 .character-feature {
-    font-size: 11px;
-    color: #ff5656;
-    font-weight: 600;
+    display: inline-block;
+    margin-top: 5px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    line-height: 1.5;
 }
+
+.character-feature.grade-FES  { background: rgba(220,0,220,0.12); color: rgb(180,0,180); border: 1px solid rgba(200,0,200,0.25); }
+.character-feature.grade-한정 { background: rgba(210,0,0,0.10);  color: rgb(190,0,0);   border: 1px solid rgba(200,0,0,0.22); }
+.character-feature.grade-통상 { background: rgba(200,110,0,0.12); color: rgb(170,90,0); border: 1px solid rgba(200,110,0,0.25); }
 
 .character-card.selected {
     background: #eefbf0;
@@ -495,7 +504,7 @@ body {
     <div style="position:absolute;bottom:-24px;left:30px;width:70px;height:70px;background:rgba(255,255,255,0.06);border-radius:50%;"></div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;position:relative;">
         <span style="background:rgba(255,255,255,0.18);border:1.5px solid rgba(255,255,255,0.4);border-radius:20px;padding:3px 12px;font-size:12px;font-weight:800;letter-spacing:1px;">🌟 FES 기간</span>
-        <span style="font-size:15px;font-weight:800;">임리스 · 케이 픽업 진행 중!</span>
+        <span style="font-size:15px;font-weight:800;">임리스 · 케이 신규 픽업 진행 중!</span>
         <span style="background:rgba(255,220,0,0.22);border:1.5px solid rgba(255,220,0,0.5);border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700;color:#ffe066;">뽑기 포인트 약 90~150회</span>
     </div>
 </div>
@@ -1682,11 +1691,32 @@ function drawCharacters() {
 
     sortedGrades.forEach(grade => {
         const section = document.createElement('div');
-        section.style.marginBottom = '0px';
+        section.style.cssText = 'width:100%;margin-bottom:0;';
 
+        const gradeLabel = grade.split('').join(' ');
         const title = document.createElement('div');
-        title.innerText = grade;
-        title.style.cssText = `display:inline-block;font-size:13px;font-weight:800;color:#fff;background:${tierColors[grade]||'#888'};border-radius:20px;padding:3px 14px;margin:14px 0 8px 4px;letter-spacing:0.5px;`;
+        title.style.cssText = `display:flex;align-items:center;gap:12px;width:100%;margin:26px 0 16px;padding:0 4px;`;
+
+        const gradeColorMap = {
+            'FES':  { line: 'rgba(220,80,255,0.85)',  pillBg: 'rgba(230,140,255,0.22)', pillBorder: 'rgba(210,80,255,0.7)',  text: 'rgb(165,30,215)'  },
+            '한정': { line: 'rgba(255,60,90,0.85)',   pillBg: 'rgba(255,100,120,0.18)', pillBorder: 'rgba(255,50,80,0.7)',   text: 'rgb(210,20,55)'   },
+            '통상': { line: 'rgba(255,155,20,0.85)',  pillBg: 'rgba(255,175,40,0.18)',  pillBorder: 'rgba(245,145,10,0.7)',  text: 'rgb(185,105,0)'   },
+        };
+        const gc = gradeColorMap[grade] || { line:'rgba(150,150,150,0.4)', pillBg:'rgba(150,150,150,0.08)', pillBorder:'rgba(150,150,150,0.3)', text:'#666' };
+
+        const lineL = document.createElement('div');
+        lineL.style.cssText = `flex:1;height:1.5px;background:linear-gradient(to right, transparent, ${gc.line});border-radius:2px;`;
+
+        const pill = document.createElement('div');
+        pill.innerText = gradeLabel;
+        pill.style.cssText = `flex-shrink:0;font-size:13px;font-weight:900;color:${gc.text};background:${gc.pillBg};border:1.5px solid ${gc.pillBorder};border-radius:20px;padding:5px 22px;letter-spacing:3px;white-space:nowrap;`;
+
+        const lineR = document.createElement('div');
+        lineR.style.cssText = `flex:1;height:1.5px;background:linear-gradient(to left, transparent, ${gc.line});border-radius:2px;`;
+
+        title.appendChild(lineL);
+        title.appendChild(pill);
+        title.appendChild(lineR);
 
         const grid = document.createElement('div');
         grid.style.display = 'flex';
@@ -1780,13 +1810,17 @@ function renderAccounts(accountsArray) {
     nameDiv.className = 'character-name';
     nameDiv.innerText = name;
 
-    const featureDiv = document.createElement('div');
-    featureDiv.className = 'character-feature';
-    featureDiv.innerText = getFeatureByName(name);
+    const grade = getGradeByName(name);
+    const featureText = getFeatureByName(name);
 
     wrapper.appendChild(img);
     wrapper.appendChild(nameDiv);
-    wrapper.appendChild(featureDiv);
+    if (featureText) {
+        const featureDiv = document.createElement('div');
+        featureDiv.className = `character-feature grade-${grade}`;
+        featureDiv.innerText = featureText;
+        wrapper.appendChild(featureDiv);
+    }
     charGrid.appendChild(wrapper);
 });
 
@@ -1989,14 +2023,15 @@ function openAccountModal(accountNum) {
         nameDiv.innerText = name;
         nameDiv.style.fontSize = "13px";
 
-        const featureDiv = document.createElement('div');
-        featureDiv.className = 'character-feature';
-        featureDiv.innerText = getFeatureByName(name);
-        featureDiv.style.fontSize = "12px";
-
         wrapper.appendChild(img);
         wrapper.appendChild(nameDiv);
-        wrapper.appendChild(featureDiv);
+        const featureText = getFeatureByName(name);
+        if (featureText) {
+            const featureDiv = document.createElement('div');
+            featureDiv.className = `character-feature grade-${getGradeByName(name)}`;
+            featureDiv.innerText = featureText;
+            wrapper.appendChild(featureDiv);
+        }
         charWrap.appendChild(wrapper);
     });
 
@@ -2138,12 +2173,12 @@ function makeSelectableCharCard(name, grade, feature, isNew = false, isPickup = 
     nameDiv.innerText = name;
 
     const featureDiv = document.createElement('div');
-    featureDiv.className = 'character-feature';
+    featureDiv.className = `character-feature grade-${grade}`;
     featureDiv.innerText = feature || '';
 
     wrapper.appendChild(img);
     wrapper.appendChild(nameDiv);
-    wrapper.appendChild(featureDiv);
+    if (feature) wrapper.appendChild(featureDiv);
 
     return wrapper;
 }
