@@ -3326,13 +3326,21 @@ function searchAccounts(scrollToResult = true) {
                 return sortOrder === 'asc' ? a.price - b.price : b.price - a.price;
             });
 
-        if (filteredAccounts.length === 0) {
-            alert('조건에 맞는 계정이 없습니다.');
-            return;
-        }
-
         currentPage = 1;
         currentFilteredAccounts = filteredAccounts;
+
+        if (filteredAccounts.length === 0) {
+            document.getElementById('summary').innerHTML = '';
+            document.getElementById('result').innerHTML = `
+                <div style="text-align:center;padding:48px 16px;background:#fff;border-radius:14px;border:1.5px solid #d6e8fa;box-shadow:0 2px 10px rgba(0,0,0,0.06);">
+                    <div style="font-size:44px;margin-bottom:14px;">🔍</div>
+                    <div style="font-size:16px;font-weight:700;color:#333;margin-bottom:8px;">조건에 맞는 계정이 없습니다</div>
+                    <div style="font-size:14px;color:#888;line-height:1.7;">선택한 학생을 줄이거나 가격 범위를 조정해 보세요.</div>
+                </div>`;
+            document.getElementById('pagination').innerHTML = '';
+            if (scrollToResult) window.scrollTo({ top: document.getElementById('result').offsetTop - 20, behavior: 'smooth' });
+            return;
+        }
         renderAccounts(filteredAccounts);
         if (scrollToResult) {
             window.scrollTo({ top: document.getElementById('summary').offsetTop, behavior: 'smooth' });
