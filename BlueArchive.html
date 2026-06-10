@@ -94,33 +94,55 @@ body {
     width: 100%;
     background: #fff;
     border-radius: 15px;
-    padding: 15px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    padding: 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+    overflow: hidden;
 }
 
 .account-header {
+    background: linear-gradient(135deg, #1b85db, #0d6fc7);
+    padding: 13px 16px 11px;
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 15px;
-    font-size: 16px;
-    justify-content: flex-start;
+    flex-wrap: wrap;
+    border-radius: 15px 15px 0 0;
 }
 
 .copy-btn {
-    padding: 5px 10px;
-    background: #4caf50;
-    color: #fff;
+    background: #fff;
+    color: #1b85db;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
+    padding: 5px 13px;
+    font-size: 13px;
+    font-weight: 800;
     cursor: pointer;
-    font-size: 14px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    flex-shrink: 0;
+}
+
+.copy-btn:hover {
+    background: #e8f4ff;
 }
 
 .account-price {
-    font-weight: bold;
-    color: #1b85db;
-    margin-left: 10px;
+    background: rgba(255,255,255,0.18);
+    border: 1.5px solid rgba(255,255,255,0.35);
+    border-radius: 20px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+    padding: 3px 13px;
+}
+
+.account-total {
+    background: rgba(255,255,255,0.12);
+    border-radius: 20px;
+    color: rgba(255,255,255,0.88);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 11px;
 }
 
 .character-list {
@@ -1764,14 +1786,20 @@ function renderAccounts(accountsArray) {
         accBox.className = 'account-card';
 
         accBox.innerHTML = `<div class="account-header">
-            <button class="copy-btn" onclick="copyAccount('${acc.num}')">복사</button>
-            <span class="account-num">${acc.num}</span>
-            <span class="account-price">가격: ${acc.price}만</span>
-            <span style="margin-left:15px; color:#34495e; font-size:15px; font-weight:600;">총 학생 ${acc.chars.length}명</span>
+            <div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0;">
+                <span style="color:rgba(255,255,255,0.70);font-size:10px;font-weight:600;letter-spacing:0.5px;">계정번호</span>
+                <span class="account-num" style="color:#fff;font-size:17px;font-weight:900;letter-spacing:1px;">${acc.num}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+                <span class="account-price">가격: ${acc.price}만</span>
+                <span class="account-total">총 ${acc.chars.length}명</span>
+                <button class="copy-btn" onclick="copyAccount('${acc.num}')">복사</button>
+            </div>
         </div>`;
 
         const charGrid = document.createElement('div');
         charGrid.className = 'character-list';
+        charGrid.style.padding = '14px 14px 12px';
 
         const listedSet = new Set(characterData.map(c => c.name));
         const uniqueChars = [...new Set(acc.chars)];
