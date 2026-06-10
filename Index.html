@@ -191,6 +191,27 @@ body {
     padding: 3px 11px;
 }
 
+.account-header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.account-badges {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+@media (max-width: 480px) {
+    .account-badges {
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 4px;
+    }
+}
+
 .character-list {
     display: flex;
     flex-wrap: wrap;
@@ -2299,9 +2320,11 @@ function renderAccounts(accountsArray) {
                 <span style="color:rgba(255,255,255,0.70);font-size:10px;font-weight:600;letter-spacing:0.5px;">계정번호</span>
                 <span class="account-num" style="color:#fff;font-size:17px;font-weight:900;letter-spacing:1px;">${acc.num}</span>
             </div>
-            <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
-                <span class="account-price">가격: ${acc.price}만</span>
-                <span class="account-total">총 ${acc.chars.length}명</span>
+            <div class="account-header-right">
+                <div class="account-badges">
+                    <span class="account-total">총 ${acc.chars.length}명</span>
+                    <span class="account-price">가격: ${acc.price}만</span>
+                </div>
                 <button class="copy-btn" onclick="copyAccount('${acc.num}')">복사</button>
             </div>
         </div>`;
