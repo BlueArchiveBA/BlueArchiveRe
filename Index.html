@@ -3867,18 +3867,42 @@ function openAccountModal(accountNum) {
 
 async function captureCard(btn) {
     const card = btn.closest('.account-card');
+    const accNum = card.querySelector('.account-num').innerText;
+    const acc = accounts.find(a => a.num === accNum);
+    if (!acc) return;
+
     btn.disabled = true;
+
+    const modal = document.getElementById('accountModal');
+    const wasOpen = modal.style.display === 'flex';
+
+    // 모달을 화면 밖으로 밀어서 렌더링 (visibility:hidden은 html2canvas가 빈 이미지 반환)
+    modal.style.transform = 'translateX(-9999px)';
+    openAccountModal(acc.num);
+
+    const modalInner = document.querySelector('#accountModal > div');
+    const charWrap = document.getElementById('modalAccountChars');
+    const origMaxHeight = charWrap.style.maxHeight;
+    const origOverflow = charWrap.style.overflowY;
+    charWrap.style.maxHeight = 'none';
+    charWrap.style.overflowY = 'visible';
+
+    // 이미지 로딩 대기
+    const imgs = modalInner.querySelectorAll('img');
+    await Promise.allSettled([...imgs].map(img =>
+        img.complete ? Promise.resolve() : new Promise(r => { img.onload = r; img.onerror = r; })
+    ));
+
     try {
-        const canvas = await html2canvas(card, {
+        const canvas = await html2canvas(modalInner, {
             useCORS: true,
             allowTaint: true,
             scale: 2,
-            backgroundColor: '#ffffff'
+            backgroundColor: '#ffffff',
+            scrollX: 0,
+            scrollY: 0
         });
-        const accNum = card.querySelector('.account-num').innerText;
-        const priceEl = card.querySelector('.account-price');
-        const priceText = priceEl ? priceEl.innerText.replace('가격: ', '').trim() : '';
-        const fileName = priceText ? `${accNum} (${priceText}).png` : `${accNum}.png`;
+        const fileName = `${acc.num} (${acc.price}만).png`;
         const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
         if (window.showSaveFilePicker) {
             const fh = await window.showSaveFilePicker({
@@ -3898,6 +3922,10 @@ async function captureCard(btn) {
     } catch(e) {
         alert('저장 실패: ' + e.message);
     } finally {
+        charWrap.style.maxHeight = origMaxHeight;
+        charWrap.style.overflowY = origOverflow;
+        if (!wasOpen) closeAccountModal();
+        modal.style.transform = '';
         btn.disabled = false;
     }
 }
