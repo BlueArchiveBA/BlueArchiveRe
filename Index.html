@@ -176,8 +176,8 @@ body {
     background: #FFEB00;
     color: #1a3a00;
     border: none;
-    border-radius: 8px;
-    padding: 5px 13px;
+    border-radius: 7px;
+    padding: 4px 11px;
     font-size: 13px;
     font-weight: 800;
     cursor: pointer;
@@ -741,17 +741,21 @@ body {
 <div id="accountModal" style="display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(20,30,50,0.52); z-index:99999; justify-content:center; align-items:center;">
     <div style="background:#fff; border-radius:20px; max-width:900px; width:96vw; padding:0; box-shadow:0 8px 48px rgba(0,0,0,0.22); position:relative; overflow:hidden;">
       <!-- 헤더 -->
-      <div style="background:linear-gradient(135deg,#1b3a6b,#1b85db); padding:16px 18px 14px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-        <div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0;">
-          <span style="color:rgba(255,255,255,0.75); font-size:11px; font-weight:600; letter-spacing:0.5px;">계정번호</span>
-          <span id="modalAccountNum" style="color:#fff; font-size:18px; font-weight:900; letter-spacing:1px;"></span>
+      <div class="account-header" style="border-radius:20px 20px 0 0;">
+        <div style="display:flex;flex-direction:column;gap:2px;min-width:0;">
+          <span class="account-num-label">계정번호</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span id="modalAccountNum" class="account-num"></span>
+            <button id="modalCopyBtn" class="copy-btn" style="padding:4px 11px;">복사</button>
+          </div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
-          <span id="modalAccountPrice" style="background:rgba(255,255,255,0.18); border:1.5px solid rgba(255,255,255,0.35); border-radius:20px; color:#fff; font-size:15px; font-weight:800; padding:4px 14px;"></span>
-          <span id="modalAccountCount" style="background:rgba(255,255,255,0.12); border-radius:20px; color:rgba(255,255,255,0.85); font-size:13px; font-weight:600; padding:4px 12px;"></span>
-          <button id="modalCopyBtn" style="background:#FFEB00; color:#1a3a00; border:none; border-radius:8px; padding:6px 14px; font-size:13px; font-weight:800; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.12);">복사</button>
-          <button onclick="closeAccountModal()" style="background:rgba(255,255,255,0.15); color:#fff; border:none; border-radius:8px; padding:6px 12px; font-size:18px; line-height:1; cursor:pointer;">×</button>
+        <div class="account-header-right" style="flex:1;justify-content:flex-end;">
+          <div class="account-badges">
+            <span id="modalAccountCount" class="account-total"></span>
+            <span id="modalAccountPrice" class="account-price"></span>
+          </div>
         </div>
+        <button onclick="closeAccountModal()" style="align-self:flex-start;background:rgba(255,255,255,0.15);color:#fff;border:none;border-radius:8px;padding:3px 10px;font-size:18px;line-height:1;cursor:pointer;flex-shrink:0;">×</button>
       </div>
       <!-- 캐릭터 목록 -->
       <div id="modalAccountChars"
@@ -3213,16 +3217,18 @@ function renderAccounts(accountsArray) {
         accBox.className = 'account-card';
 
         accBox.innerHTML = `<div class="account-header">
-            <div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0;">
+            <div style="display:flex;flex-direction:column;gap:2px;min-width:0;">
                 <span class="account-num-label">계정번호</span>
-                <span class="account-num">${acc.num}</span>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="account-num">${acc.num}</span>
+                    <button class="copy-btn" onclick="copyAccount('${acc.num}')">복사</button>
+                </div>
             </div>
-            <div class="account-header-right">
+            <div class="account-header-right" style="flex:1;justify-content:flex-end;">
                 <div class="account-badges">
                     <span class="account-total">총 ${acc.chars.length}명</span>
                     <span class="account-price">가격: ${acc.price}만</span>
                 </div>
-                <button class="copy-btn" onclick="copyAccount('${acc.num}')">복사</button>
             </div>
         </div>`;
 
