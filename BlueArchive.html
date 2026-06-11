@@ -247,6 +247,25 @@ body {
     flex-direction: column;
     align-items: center;
     width: 70px;
+    position: relative;
+    border-radius: 12px;
+    border: 2px solid transparent;
+    padding: 4px 2px 2px;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.result-character-card.selected {
+    background: #eefbf0;
+    box-shadow: 0 0 0 2px #22c55e, 0 4px 14px rgba(34,197,94,0.18);
+}
+
+.result-character-card.selected img {
+    border-color: #22c55e !important;
+    box-shadow: 0 0 0 3px rgba(34,197,94,0.25);
+}
+
+.result-character-card.selected .char-check {
+    display: block;
 }
 
 .result-character-card img {
@@ -3381,20 +3400,40 @@ function renderAccounts(accountsArray) {
         // 최종: 등록된 학생 + 미분류 학생
         const finalChars = [...sortedListed, ...unlistedChars];
 
-        // ✅ 최대 30개만 표시
+        // 최대 30개 표시 — 선택한 학생은 범위 밖이어도 끝에서 비선택 학생을 빼고 반드시 포함
         const maxShow = 30;
-        const visibleChars = finalChars.slice(0, maxShow);
+        const first30 = finalChars.slice(0, maxShow);
+        const selectedNotVisible = finalChars.slice(maxShow).filter(n => selectedChars.includes(n));
+        let visibleChars;
+        if (selectedNotVisible.length === 0) {
+            visibleChars = first30;
+        } else {
+            const result = [...first30];
+            let toRemove = selectedNotVisible.length;
+            for (let i = result.length - 1; i >= 0 && toRemove > 0; i--) {
+                if (!selectedChars.includes(result[i])) {
+                    result.splice(i, 1);
+                    toRemove--;
+                }
+            }
+            visibleChars = [...result, ...selectedNotVisible];
+        }
 
         visibleChars.forEach(name => {
             const wrapper = document.createElement('div');
             wrapper.className = 'result-character-card';
+
+            const check = document.createElement('div');
+            check.className = 'char-check';
+            check.innerText = '✓';
+            wrapper.appendChild(check);
 
             const img = document.createElement('img');
             img.src = `/static/images/${name}.png`;
             img.style.border = `3px solid ${gradeBorderColors[getGradeByName(name)] || 'gray'}`;
 
             if (selectedChars.includes(name)) {
-                wrapper.style.backgroundColor = '#cfe9ff';
+                wrapper.classList.add('selected');
             }
 
     const nameDiv = document.createElement('div');
@@ -3611,11 +3650,20 @@ function openAccountModal(accountNum) {
         const wrapper = document.createElement('div');
         wrapper.className = 'result-character-card';
 
+        const check = document.createElement('div');
+        check.className = 'char-check';
+        check.innerText = '✓';
+        wrapper.appendChild(check);
+
         const img = document.createElement('img');
         img.src = `/static/images/${name}.png`;
         img.style.border = `2px solid ${gradeBorderColors[getGradeByName(name)] || 'gray'}`;
         img.style.width = "53px";
         img.style.height = "53px";
+
+        if (selectedChars.includes(name)) {
+            wrapper.classList.add('selected');
+        }
 
         const nameDiv = document.createElement('div');
         nameDiv.className = 'character-name';
