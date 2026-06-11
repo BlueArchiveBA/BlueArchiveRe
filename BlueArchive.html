@@ -3809,7 +3809,7 @@ function openAccountModal(accountNum) {
                 URL.revokeObjectURL(a.href);
             }
         } catch(e) {
-            alert('저장 실패: ' + e.message);
+            if (e.name !== 'AbortError') alert('저장 실패: ' + e.message);
         } finally {
             charWrap.style.maxHeight = originalMaxHeight;
             charWrap.style.overflowY = originalOverflow;
