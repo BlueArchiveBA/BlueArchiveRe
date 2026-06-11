@@ -13,6 +13,7 @@
 <meta property="og:description" content="블루아카이브 한국서버 리세계 직접 판매. 원하는 캐릭터 기준으로 검색하고 인증된 국산 계정을 구매하세요.">
 <meta property="og:locale" content="ko_KR">
 <title>블루아카이브 리세계 판매 | 리세팩토리</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -195,6 +196,33 @@ body {
     background: #ffe000;
 }
 
+.save-btn {
+    background: rgba(255,255,255,0.18);
+    color: #fff;
+    border: 1.5px solid rgba(255,255,255,0.4);
+    border-radius: 7px;
+    padding: 4px 11px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.10);
+    flex-shrink: 0;
+}
+
+.save-btn:hover {
+    background: rgba(255,255,255,0.28);
+}
+
+.save-btn .btn-text {
+    display: none;
+}
+
+.num-btn-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
 .account-price {
     background: rgba(255,255,255,0.18);
     border: 1.5px solid rgba(255,255,255,0.35);
@@ -209,7 +237,7 @@ body {
     background: rgba(255,255,255,0.12);
     border-radius: 20px;
     color: rgba(255,255,255,0.88);
-    font-size: 12px;
+    font-size: 9.6px;
     font-weight: 600;
     padding: 3px 11px;
 }
@@ -232,6 +260,38 @@ body {
         flex-direction: column;
         align-items: flex-end;
         gap: 4px;
+    }
+    .account-header {
+        padding: 7px 14px;
+        gap: 9px;
+    }
+    .num-btn-wrap {
+        gap: 7px;
+    }
+    .account-header-right {
+        gap: 7px;
+    }
+    .copy-btn {
+        padding: 4px 8px;
+        font-size: 11px;
+    }
+    .save-btn {
+        padding: 4px 8px;
+        font-size: 11px;
+    }
+    .account-num {
+        font-size: 15px;
+        letter-spacing: 0.2px;
+    }
+    .account-price {
+        font-size: 13px;
+        padding: 3px 11px;
+    }
+    .account-price {
+        padding: 3px 12px;
+    }
+    .account-total {
+        padding: 3px 10px;
     }
 }
 
@@ -771,7 +831,10 @@ body {
           <span class="account-num-label">계정번호</span>
           <div style="display:flex;align-items:center;gap:8px;">
             <span id="modalAccountNum" class="account-num"></span>
-            <button id="modalCopyBtn" class="copy-btn" style="padding:4px 11px;">복사</button>
+            <div class="num-btn-wrap">
+              <button id="modalCopyBtn" class="copy-btn" title="계정번호 복사">📋 복사</button>
+              <button id="modalCaptureBtn" class="save-btn" title="계정이미지 저장">🖼️<span class="btn-text"> 저장</span></button>
+            </div>
           </div>
         </div>
         <div class="account-header-right" style="flex:1;justify-content:flex-end;">
@@ -3371,7 +3434,10 @@ function renderAccounts(accountsArray) {
                 <span class="account-num-label">계정번호</span>
                 <div style="display:flex;align-items:center;gap:8px;">
                     <span class="account-num">${acc.num}</span>
-                    <button class="copy-btn" onclick="copyAccount('${acc.num}')">복사</button>
+                    <div class="num-btn-wrap">
+                      <button class="copy-btn" onclick="copyAccount('${acc.num}')" title="계정번호 복사">📋 복사</button>
+                      <button class="save-btn" onclick="captureCard(this)" title="이미지로 저장">🖼️<span class="btn-text"> 저장</span></button>
+                    </div>
                 </div>
             </div>
             <div class="account-header-right" style="flex:1;justify-content:flex-end;">
@@ -3639,6 +3705,56 @@ function openAccountModal(accountNum) {
         navigator.clipboard.writeText(copyText).then(() => alert('계정번호 복사 완료!'));
     };
 
+    // 캡쳐 버튼 이벤트
+    const captureBtn = document.getElementById('modalCaptureBtn');
+    captureBtn.onclick = async function() {
+        const modalInner = document.querySelector('#accountModal > div');
+        const charWrap = document.getElementById('modalAccountChars');
+        const originalMaxHeight = charWrap.style.maxHeight;
+        const originalOverflow = charWrap.style.overflowY;
+
+        // 스크롤 없이 전체 표시
+        charWrap.style.maxHeight = 'none';
+        charWrap.style.overflowY = 'visible';
+
+        captureBtn.disabled = true;
+
+        try {
+            const canvas = await html2canvas(modalInner, {
+                useCORS: true,
+                allowTaint: true,
+                scale: 2,
+                backgroundColor: '#ffffff',
+                scrollX: 0,
+                scrollY: 0
+            });
+
+            const fileName = `${acc.num} (${acc.price}만).png`;
+            const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+            if (window.showSaveFilePicker) {
+                const fh = await window.showSaveFilePicker({
+                    suggestedName: fileName,
+                    types: [{ description: 'PNG 이미지', accept: { 'image/png': ['.png'] } }]
+                });
+                const ws = await fh.createWritable();
+                await ws.write(blob);
+                await ws.close();
+            } else {
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = fileName;
+                a.click();
+                URL.revokeObjectURL(a.href);
+            }
+        } catch(e) {
+            alert('저장 실패: ' + e.message);
+        } finally {
+            charWrap.style.maxHeight = originalMaxHeight;
+            charWrap.style.overflowY = originalOverflow;
+            captureBtn.disabled = false;
+        }
+    };
+
     // 캐릭터 목록 영역
     const charWrap = document.getElementById('modalAccountChars');
     charWrap.innerHTML = '';
@@ -3684,6 +3800,43 @@ function openAccountModal(accountNum) {
     });
 
     document.getElementById('accountModal').style.display = 'flex';
+}
+
+async function captureCard(btn) {
+    const card = btn.closest('.account-card');
+    btn.disabled = true;
+    try {
+        const canvas = await html2canvas(card, {
+            useCORS: true,
+            allowTaint: true,
+            scale: 2,
+            backgroundColor: '#ffffff'
+        });
+        const accNum = card.querySelector('.account-num').innerText;
+        const priceEl = card.querySelector('.account-price');
+        const priceText = priceEl ? priceEl.innerText.replace('가격: ', '').trim() : '';
+        const fileName = priceText ? `${accNum} (${priceText}).png` : `${accNum}.png`;
+        const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+        if (window.showSaveFilePicker) {
+            const fh = await window.showSaveFilePicker({
+                suggestedName: fileName,
+                types: [{ description: 'PNG 이미지', accept: { 'image/png': ['.png'] } }]
+            });
+            const ws = await fh.createWritable();
+            await ws.write(blob);
+            await ws.close();
+        } else {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = fileName;
+            a.click();
+            URL.revokeObjectURL(a.href);
+        }
+    } catch(e) {
+        alert('저장 실패: ' + e.message);
+    } finally {
+        btn.disabled = false;
+    }
 }
 
 function closeAccountModal() {
