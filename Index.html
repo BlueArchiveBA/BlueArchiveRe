@@ -179,6 +179,10 @@ body {
     letter-spacing: 1px;
 }
 
+.price-capture {
+    cursor: pointer;
+}
+
 .copy-btn {
     background: #FFEB00;
     color: #1a3a00;
@@ -837,14 +841,13 @@ body {
             <span id="modalAccountNum" class="account-num"></span>
             <div class="num-btn-wrap">
               <button id="modalCopyBtn" class="copy-btn" title="계정번호 복사">📋 복사</button>
-              <button id="modalCaptureBtn" class="save-btn" title="계정이미지 저장">🖼️<span class="btn-text"> 저장</span></button>
             </div>
           </div>
         </div>
         <div class="account-header-right" style="flex:1;justify-content:flex-end;">
           <div class="account-badges">
             <span id="modalAccountCount" class="account-total"></span>
-            <span id="modalAccountPrice" class="account-price"></span>
+            <span id="modalAccountPrice" class="account-price price-capture" title="클릭하면 이미지 저장"></span>
           </div>
         </div>
         <button onclick="closeAccountModal()" style="align-self:flex-start;background:rgba(255,255,255,0.15);color:#fff;border:none;border-radius:8px;padding:3px 10px;font-size:18px;line-height:1;cursor:pointer;flex-shrink:0;">×</button>
@@ -3559,14 +3562,13 @@ function renderAccounts(accountsArray) {
                     <span class="account-num">${acc.num}</span>
                     <div class="num-btn-wrap">
                       <button class="copy-btn" onclick="copyAccount('${acc.num}')" title="계정번호 복사">📋 복사</button>
-                      <button class="save-btn" onclick="captureCard(this)" title="이미지로 저장">🖼️<span class="btn-text"> 저장</span></button>
                     </div>
                 </div>
             </div>
             <div class="account-header-right" style="flex:1;justify-content:flex-end;">
                 <div class="account-badges">
                     <span class="account-total">총 ${acc.chars.length}명</span>
-                    <span class="account-price">가격: ${acc.price}만</span>
+                    <span class="account-price price-capture" onclick="captureCard(this)" title="클릭하면 이미지 저장">가격: ${acc.price}만</span>
                 </div>
             </div>
         </div>`;
@@ -3828,20 +3830,16 @@ function openAccountModal(accountNum) {
         navigator.clipboard.writeText(copyText).then(() => alert('계정번호 복사 완료!'));
     };
 
-    // 캡쳐 버튼 이벤트
-    const captureBtn = document.getElementById('modalCaptureBtn');
-    captureBtn.onclick = async function() {
+    // 가격 클릭 → 이미지 저장
+    const modalPriceEl = document.getElementById('modalAccountPrice');
+    modalPriceEl.onclick = async function() {
         const modalInner = document.querySelector('#accountModal > div');
         const charWrap = document.getElementById('modalAccountChars');
         const originalMaxHeight = charWrap.style.maxHeight;
         const originalOverflow = charWrap.style.overflowY;
-
-        // 스크롤 없이 전체 표시
         charWrap.style.maxHeight = 'none';
         charWrap.style.overflowY = 'visible';
-
-        captureBtn.disabled = true;
-
+        modalPriceEl.style.pointerEvents = 'none';
         try {
             const canvas = await html2canvas(modalInner, {
                 useCORS: true,
@@ -3851,7 +3849,6 @@ function openAccountModal(accountNum) {
                 scrollX: 0,
                 scrollY: 0
             });
-
             const fileName = `${acc.num} (${acc.price}만).png`;
             const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
             if (window.showSaveFilePicker) {
@@ -3874,7 +3871,7 @@ function openAccountModal(accountNum) {
         } finally {
             charWrap.style.maxHeight = originalMaxHeight;
             charWrap.style.overflowY = originalOverflow;
-            captureBtn.disabled = false;
+            modalPriceEl.style.pointerEvents = '';
         }
     };
 
@@ -3925,13 +3922,13 @@ function openAccountModal(accountNum) {
     document.getElementById('accountModal').style.display = 'flex';
 }
 
-async function captureCard(btn) {
-    const card = btn.closest('.account-card');
+async function captureCard(priceEl) {
+    const card = priceEl.closest('.account-card');
     const accNum = card.querySelector('.account-num').innerText;
     const acc = accounts.find(a => a.num === accNum);
     if (!acc) return;
 
-    btn.disabled = true;
+    priceEl.style.pointerEvents = 'none';
 
     const modal = document.getElementById('accountModal');
     const wasOpen = modal.style.display === 'flex';
@@ -3986,7 +3983,7 @@ async function captureCard(btn) {
         charWrap.style.overflowY = origOverflow;
         if (!wasOpen) closeAccountModal();
         modal.style.transform = '';
-        btn.disabled = false;
+        priceEl.style.pointerEvents = '';
     }
 }
 
