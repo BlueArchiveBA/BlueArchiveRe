@@ -57,8 +57,7 @@ function renderSelected(){
 function markFiltersChanged(){ $('filter-status').textContent='계정 찾기를 누르면 변경한 조건으로 검색합니다.'; }
 function selectStudent(id){const other=mode==='required'?'preferred':'required';selected[other]=selected[other].filter(x=>x!==id);if(selected[mode].includes(id))selected[mode]=selected[mode].filter(x=>x!==id);else selected[mode].push(id);renderSelected();renderStudents();markFiltersChanged();}
 function getFilters(){const min=Number($('min-price').value),max=$('max-price').value===''?Infinity:Number($('max-price').value);if(!Number.isFinite(min)||min<0||max<0||min>max)throw new Error('최소·최대 가격 범위를 확인해 주세요.');return {required:[...selected.required],preferred:[...selected.preferred],min,max,sort:$('sort-order').value};}
-function updateUrl(f){const params=new URLSearchParams();if(f.required.length)params.set('must',f.required.join(','));if(f.preferred.length)params.set('wish',f.preferred.join(','));params.set('min',String(f.min));if(Number.isFinite(f.max))params.set('max',String(f.max));params.set('sort',f.sort);history.replaceState(null,'',`${location.pathname}?${params}`);}
-function search({scroll=false,relax=false}={}){if(!data)return;try{const f=getFilters();applied=f;relaxed=relax;current=filterAccounts(data.accounts,{...f,relaxed},data.students);page=1;renderAccounts();updateUrl(f);$('filter-status').textContent='';if(scroll)$('results').scrollIntoView({behavior:'smooth',block:'start'});}catch(e){toast(e.message);}}
+function search({scroll=false,relax=false}={}){if(!data)return;try{const f=getFilters();applied=f;relaxed=relax;current=filterAccounts(data.accounts,{...f,relaxed},data.students);page=1;renderAccounts();$('filter-status').textContent='';if(scroll)$('results').scrollIntoView({behavior:'smooth',block:'start'});}catch(e){toast(e.message);}}
 function mini(student){
   const match=applied.required.includes(student.id)?'필수':applied.preferred.includes(student.id)?'선호':'';
   const label=`${student.fullName} · ${displayGrade(student)==='FES'?'페스':displayGrade(student)}${match?` · ${match} 조건`:''}`;
@@ -184,7 +183,7 @@ $('student-search').addEventListener('input',renderStudents);
 $('grade-tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;grade=b.dataset.grade;document.querySelectorAll('#grade-tabs button').forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-selected',String(x===b));});renderStudents();});
 for(const type of ['required','preferred'])$(`mode-${type}`).addEventListener('click',()=>{mode=type;for(const t of ['required','preferred']){$(`mode-${t}`).classList.toggle('active',t===type);$(`mode-${t}`).setAttribute('aria-pressed',String(t===type));}});
 $('find-button').addEventListener('click',()=>search({scroll:true}));
-$('sort-order').addEventListener('change',()=>{if(!applied)return;applied.sort=$('sort-order').value;current=filterAccounts(data.accounts,{...applied,relaxed},data.students);page=1;renderAccounts();updateUrl(applied);});
+$('sort-order').addEventListener('change',()=>{if(!applied)return;applied.sort=$('sort-order').value;current=filterAccounts(data.accounts,{...applied,relaxed},data.students);page=1;renderAccounts();});
 $('reset-filters').addEventListener('click',()=>{selected={required:[],preferred:[]};$('min-price').value=0;$('max-price').value='';renderSelected();renderStudents();search();});
 document.addEventListener('keydown',e=>{if(e.key==='/'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();$('student-search').focus();}});
 function showPriceNotice(){
@@ -208,9 +207,13 @@ function showPriceNotice(){
   notice.hidden=false;
 }
 async function init(){try{const r=await fetch('./catalog.json');if(!r.ok)throw new Error('재고를 불러오지 못했습니다.');data=await r.json();byId=new Map(data.students.map((student,order)=>[student.id,{...student,order}]));$('inventory-count').textContent=`${data.accounts.length.toLocaleString()}개`;$('source-date').textContent=`목록 업데이트 ${data.sourceDate}`;
-  const params=new URLSearchParams(location.search);for(const k of ['must','wish']){const ids=(params.get(k)||'').split(',').filter(id=>byId.has(id));selected[k==='must'?'required':'preferred']=[...new Set(ids)];}selected.preferred=selected.preferred.filter(id=>!selected.required.includes(id));for(const [param,id]of [['min','min-price'],['max','max-price']]){const v=params.get(param);if(v!==null&&Number.isFinite(Number(v))&&Number(v)>=0)$(id).value=v;}
-  const sort=params.get('sort');
-  $('sort-order').value=['priceAsc','priceDesc'].includes(sort)?sort:'recommended';
+  const url=new URL(location.href);
+  for(const key of ['must','wish','min','max','sort'])if(url.searchParams.has(key))url.searchParams.delete(key);
+  if(url.href!==location.href)history.replaceState(null,'',url.href);
+  $('student-search').value='';
+  $('min-price').value='0';
+  $('max-price').value='';
+  $('sort-order').value='recommended';
   renderStudents();renderSelected();search();showPriceNotice();
 }catch(e){$('account-grid').innerHTML=`<div class="empty-state"><h3>목록을 불러오지 못했어요.</h3><p>${esc(e.message)}</p><button onclick="location.reload()">다시 시도</button></div>`;}}
 init();
