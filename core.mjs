@@ -89,8 +89,9 @@ export function folderLocation(path) {
   return {pc,slot};
 }
 
-export function parseImport(text, format, group, students, {requireLocation=false}={}) {
+export function parseImport(text, format, group, students, {requireLocation=false,skipAccounts}={}) {
   const index=aliasIndex(students), rows=[], unknown=new Map(), errors=[], seen=new Set();
+  let skipped=0;
   const prefix=group.trim().toUpperCase();
   text.split(/\r\n?|\n/).forEach((line,i)=> {
     if(!line.trim())return;
@@ -118,6 +119,7 @@ export function parseImport(text, format, group, students, {requireLocation=fals
         num=`${prefix}_${rawNum}`;
       }
     }
+    if (skipAccounts?.has(num)) {skipped++;return;}
     if(seen.has(num)){errors.push(`${i+1}행: 계정번호가 중복됩니다 (${num}).`);return;}
     seen.add(num);
     const ids=[], unresolved=[];
@@ -127,18 +129,20 @@ export function parseImport(text, format, group, students, {requireLocation=fals
     }
     rows.push({num,price,studentIds:[...new Set(ids)],unresolved,line:i+1});
   });
-  return {rows, unknown:[...unknown].map(([name,count])=>({name,count})), errors};
+  return {rows, unknown:[...unknown].map(([name,count])=>({name,count})), errors, skipped};
 }
 
-export function parseRosterBatch(sources, format, students) {
+export function parseRosterBatch(sources, format, students, {skipAccounts}={}) {
   const rows=[],errors=[],unknown=new Map(),seen=new Map();
+  let skipped=0;
   for (const source of sources) {
     const {label,text,pc='',slot=''}=source;
     if (!text.trim()) continue;
     if ((pc||slot)&&(!SOURCE_PCS.includes(pc)||!SOURCE_SLOTS.includes(slot))) {
       errors.push(`${label}: PC와 앱플레이어를 모두 선택해 주세요.`);continue;
     }
-    const parsed=parseImport(text,format,pc+slot,students,{requireLocation:true});
+    const parsed=parseImport(text,format,pc+slot,students,{requireLocation:true,skipAccounts});
+    skipped+=parsed.skipped;
     errors.push(...parsed.errors.map(error=>`${label} · ${error}`));
     for (const entry of parsed.unknown) unknown.set(entry.name,(unknown.get(entry.name)||0)+entry.count);
     for (const row of parsed.rows) {
@@ -152,7 +156,7 @@ export function parseRosterBatch(sources, format, students) {
       rows.push(located);
     }
   }
-  return {rows,errors,unknown:[...unknown].map(([name,count])=>({name,count}))};
+  return {rows,errors,unknown:[...unknown].map(([name,count])=>({name,count})),skipped};
 }
 export const STATS_KEY='resetfactory.searchStats.v1';
 export const CONSENT_KEY='resetfactory.searchStats.enabled';

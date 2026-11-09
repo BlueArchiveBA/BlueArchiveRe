@@ -102,12 +102,12 @@ html:has(.shop-body) { scroll-padding-top: 65px; }
 .shop-body .grade-fes { --grade-color: #e100d1; }
 .shop-body .grade-limited { --grade-color: #e52939; }
 .shop-body .grade-regular { --grade-color: #e78c05; }
-.shop-body .portrait-wrap[class*="grade-"] { border: 2px solid var(--grade-color); padding: 1px; }
+.shop-body .portrait-wrap[class*="grade-"] { border: 3px solid var(--grade-color); padding: 1px; }
 .shop-body .selection-check { display: grid; place-items: center; top: -4px; right: -4px; border: 1px solid #fff; background: #1769aa; font-size: 12px; }
 .shop-body .selection-check.preferred-check { background: #7142a0; }
 .shop-body .grade-key { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 2px 0 8px; color: var(--shop-muted); font-size: 12px; font-weight: 700; }
 .shop-body .grade-key > span { display: inline-flex; align-items: center; gap: 4px; }
-.shop-body .grade-key > [class*="grade-"]::before { content: ""; width: 12px; height: 12px; border: 2px solid var(--grade-color); border-radius: 50%; background: #fff; }
+.shop-body .grade-key > [class*="grade-"]::before { content: ""; width: 12px; height: 12px; border: 3px solid var(--grade-color); border-radius: 50%; background: #fff; }
 .shop-body .grade-key .key-required { color: #1769aa; }
 .shop-body .grade-key .key-preferred { color: #7142a0; }
 .shop-body .result-grade-key { margin: 0 0 10px; }
