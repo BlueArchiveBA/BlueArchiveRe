@@ -1,0 +1,11 @@
+{
+  "name": "bluearchive-workbench",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@netlify/blobs": "11.1.8"
+  },
+  "scripts": {
+    "test": "node --test tests/core.test.mjs tests/research.test.mjs"
+  }
+}

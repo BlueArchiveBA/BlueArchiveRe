@@ -57,7 +57,35 @@ function renderSelected(){
 function markFiltersChanged(){ $('filter-status').textContent='계정 찾기를 누르면 변경한 조건으로 검색합니다.'; }
 function selectStudent(id){const other=mode==='required'?'preferred':'required';selected[other]=selected[other].filter(x=>x!==id);if(selected[mode].includes(id))selected[mode]=selected[mode].filter(x=>x!==id);else selected[mode].push(id);renderSelected();renderStudents();markFiltersChanged();}
 function getFilters(){const min=Number($('min-price').value),max=$('max-price').value===''?Infinity:Number($('max-price').value);if(!Number.isFinite(min)||min<0||max<0||min>max)throw new Error('최소·최대 가격 범위를 확인해 주세요.');return {required:[...selected.required],preferred:[...selected.preferred],min,max,sort:$('sort-order').value};}
-function search({scroll=false,relax=false}={}){if(!data)return;try{const f=getFilters();applied=f;relaxed=relax;current=filterAccounts(data.accounts,{...f,relaxed},data.students);page=1;renderAccounts();$('filter-status').textContent='';if(scroll)$('results').scrollIntoView({behavior:'smooth',block:'start'});}catch(e){toast(e.message);}}
+function search({scroll=false,relax=false,record=false}={}){
+  if(!data)return;
+  try{
+    const filters=getFilters();
+    applied=filters;
+    relaxed=relax;
+    current=filterAccounts(data.accounts,{...filters,relaxed},data.students);
+    page=1;
+    renderAccounts();
+    $('filter-status').textContent='';
+    if(record && location.protocol==='https:'){
+      const band=value=>Math.floor(Math.min(value,999)/5)*5;
+      void fetch('/.netlify/functions/search-stats',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          channel:document.body.classList.contains('idfarm-body')?'idfarm':'website',
+          required:filters.required,
+          preferred:filters.preferred,
+          minBand:band(filters.min),
+          maxBand:Number.isFinite(filters.max)?band(filters.max):null,
+        }),
+        keepalive:true,
+        referrerPolicy:'no-referrer',
+      }).catch(()=>{});
+    }
+    if(scroll)$('results').scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(error){toast(error.message);}
+}
 function mini(student){
   const match=applied.required.includes(student.id)?'필수':applied.preferred.includes(student.id)?'선호':'';
   const label=`${student.fullName} · ${displayGrade(student)==='FES'?'페스':displayGrade(student)}${match?` · ${match} 조건`:''}`;
@@ -182,7 +210,7 @@ document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if
 $('student-search').addEventListener('input',renderStudents);
 $('grade-tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;grade=b.dataset.grade;document.querySelectorAll('#grade-tabs button').forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-selected',String(x===b));});renderStudents();});
 for(const type of ['required','preferred'])$(`mode-${type}`).addEventListener('click',()=>{mode=type;for(const t of ['required','preferred']){$(`mode-${t}`).classList.toggle('active',t===type);$(`mode-${t}`).setAttribute('aria-pressed',String(t===type));}});
-$('find-button').addEventListener('click',()=>search({scroll:true}));
+$('find-button').addEventListener('click',()=>search({scroll:true,record:true}));
 $('sort-order').addEventListener('change',()=>{if(!applied)return;applied.sort=$('sort-order').value;current=filterAccounts(data.accounts,{...applied,relaxed},data.students);page=1;renderAccounts();});
 $('reset-filters').addEventListener('click',()=>{selected={required:[],preferred:[]};$('min-price').value=0;$('max-price').value='';renderSelected();renderStudents();search();});
 document.addEventListener('keydown',e=>{if(e.key==='/'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();$('student-search').focus();}});
