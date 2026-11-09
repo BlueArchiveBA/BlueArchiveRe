@@ -40,7 +40,19 @@ function renderStudents(){
   $('student-grid').innerHTML=students.map(studentCard).join('')||'<div class="empty-state"><p>해당 이름의 학생이 없어요. 다른 이름이나 약칭으로 검색해 보세요.</p></div>';
   $('student-visible-count').textContent=`${students.length}명`;
 }
-function renderSelected(){for(const type of ['required','preferred']){$(`${type}-chips`).innerHTML=selected[type].map(id=>`<button class="chip ${type==='preferred'?'optional':''}" data-remove="${id}" aria-label="${esc(byId.get(id).name)} 선택 해제">${esc(byId.get(id).name)}<span>×</span></button>`).join('')||'<span class="empty-selection">선택한 학생 없음</span>';}$('selected-count').textContent=selected.required.length+selected.preferred.length;}
+function renderSelected(){
+  for(const type of ['required','preferred']){
+    $(`${type}-chips`).innerHTML=selected[type].map(id=>{
+      const student=byId.get(id);
+      const grade=displayGrade(student);
+      const label=esc(`${student.fullName} · ${grade==='FES'?'페스':grade}`);
+      return `<button type="button" class="chip ${type==='preferred'?'optional':''}" data-remove="${esc(id)}" title="${label}" aria-label="${label} 선택 해제">
+        ${portraitWithGrade(student)}<span>${esc(student.name)}</span><span class="chip-remove" aria-hidden="true">×</span>
+      </button>`;
+    }).join('')||'<span class="empty-selection">선택한 학생 없음</span>';
+  }
+  $('selected-count').textContent=selected.required.length+selected.preferred.length;
+}
 function markFiltersChanged(){ $('filter-status').textContent='계정 찾기를 누르면 변경한 조건으로 검색합니다.'; }
 function selectStudent(id){const other=mode==='required'?'preferred':'required';selected[other]=selected[other].filter(x=>x!==id);if(selected[mode].includes(id))selected[mode]=selected[mode].filter(x=>x!==id);else selected[mode].push(id);renderSelected();renderStudents();markFiltersChanged();}
 function getFilters(){const min=Number($('min-price').value),max=$('max-price').value===''?Infinity:Number($('max-price').value);if(!Number.isFinite(min)||min<0||max<0||min>max)throw new Error('최소·최대 가격 범위를 확인해 주세요.');return {required:[...selected.required],preferred:[...selected.preferred],min,max,sort:$('sort-order').value};}
