@@ -200,6 +200,41 @@ html:has(.shop-body) { scroll-padding-top: 65px; }
 .shop-body .guide-coupon-rules .example-table th, .shop-body .guide-coupon-rules .example-table td { padding: 8px; border: 1px solid var(--shop-line); text-align: left; }
 .shop-body .guide-coupon-rules .example-table th { color: var(--shop-navy); background: #edf6ff; }
 
+.shop-body .selection-guide { word-break: keep-all; overflow-wrap: anywhere; }
+.shop-body .selection-guide > .guide-back { margin-top: 20px; }
+.shop-body .selection-hero {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 20px;
+  margin: 0 0 20px; padding: clamp(14px, 3.5vw, 26px);
+  background: linear-gradient(145deg, #f8fcff, #e5f2ff); border: 1px solid var(--shop-line); border-radius: 14px;
+}
+.shop-body .selection-hero > div:first-child > p:not(.shop-kicker) { margin: 10px 0 14px; color: var(--shop-muted); }
+.shop-body .selection-guide .primary { display: inline-flex; align-items: center; gap: 6px; width: fit-content; }
+.shop-body .selection-example { padding: 14px; border: 1px solid var(--shop-line); border-radius: 12px; background: #fff; }
+.shop-body .selection-guide h2 { margin: 0; color: var(--shop-navy); font-size: clamp(18px, 3vw, 22px); }
+.shop-body .selection-example h2 { margin-top: 2px; }
+.shop-body .selection-students {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px;
+  margin: 12px 0; padding: 0; list-style: none; text-align: center;
+}
+.shop-body .selection-students li { display: grid; justify-items: center; gap: 3px; }
+.shop-body .selection-students .portrait-wrap { width: min(100%, 56px); border-radius: 50%; }
+.shop-body .selection-tag { padding: 1px 7px; border-radius: 5px; background: #e8f4ff; color: #175887; font-size: 12px; font-weight: 800; }
+.shop-body .selection-tag-preferred { background: #f3eaff; color: #643593; }
+.shop-body .selection-example-budget { margin: 0; padding: 6px 9px; border-radius: 6px; background: #f1f7fe; font-size: 13px; }
+.shop-body .selection-example-note { margin: 6px 0 0; color: var(--shop-muted); font-size: 12px; }
+.shop-body .selection-steps { margin: 8px 0 18px; padding: 0; list-style: none; }
+.shop-body .selection-steps h3 { margin: 0 0 4px; color: var(--shop-navy); font-size: 16px; }
+.shop-body .selection-steps p, .shop-body .selection-tip p { margin: 0; }
+.shop-body .selection-season { margin: 0 0 18px; }
+.shop-body .selection-season-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 9px; margin-top: 8px;
+}
+.shop-body .selection-season h3 { margin: 0 0 5px; color: var(--shop-navy); font-size: 16px; }
+.shop-body .selection-season .guide-card p { margin: 0; }
+.shop-body .selection-season a { color: var(--shop-blue); text-decoration: underline; text-underline-offset: 2px; }
+.shop-body .selection-tip h2 { margin-bottom: 4px; }
+.shop-body .selection-next { margin: 18px 0 12px; }
+
 @media (max-width: 760px) {
   html:has(.shop-body) { scroll-padding-top: 75px; }
   .shop-body .header-inner { flex-wrap: wrap; gap: 2px 8px; padding-block: 4px; }
@@ -218,6 +253,7 @@ html:has(.shop-body) { scroll-padding-top: 65px; }
   .shop-body .account-price { flex-direction: column; align-items: flex-end; }
   .shop-body .account-actions .kakao-button { flex: 1; min-width: 0; }
   .shop-body .help-strip .kakao-button { margin-top: 10px; }
+  .shop-body .selection-hero { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 370px) {
   html:has(.shop-body) { scroll-padding-top: 91px; }
