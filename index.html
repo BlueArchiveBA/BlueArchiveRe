@@ -9,8 +9,8 @@
   <link rel="canonical" href="https://bluearchivereset.netlify.app/">
   <!-- /storefront-only -->
   <link rel="icon" type="image/png" sizes="48x48" href="/static/images/favicon.png">
-  <link rel="stylesheet" href="styles.css?v=shop10">
-  <script type="module" src="shop.js?v=11"></script>
+  <link rel="stylesheet" href="styles.css?v=shop12">
+  <script type="module" src="shop.js?v=14"></script>
 </head>
 <body class="shop-body">
   <header class="site-header"><div class="header-inner">
@@ -91,6 +91,18 @@
     <!-- /storefront-only -->
   </main>
   <footer><span class="brand-word">리세팩토리</span><p>블루아카이브 한국 서버 리세계</p></footer>
+  <aside class="price-notice" id="price-notice" aria-labelledby="price-notice-title" hidden>
+    <div class="price-notice-top">
+      <h2 id="price-notice-title">계정 가격 인하!</h2>
+      <button type="button" class="price-notice-close" id="price-notice-close">닫기 <span aria-hidden="true">×</span></button>
+    </div>
+    <p id="price-notice-summary"></p>
+    <p id="price-notice-basis">11월 9일 적용</p>
+    <div class="price-notice-actions">
+      <button type="button" id="price-notice-today">오늘 그만 보기</button>
+      <a href="#results" id="price-notice-link">계정 목록 보기 <span aria-hidden="true">↓</span></a>
+    </div>
+  </aside>
   <dialog id="info-dialog" aria-labelledby="info-title"><div class="dialog-top"><h2 id="info-title"></h2><button class="icon-button" data-close="info-dialog" aria-label="닫기" type="button">×</button></div><div id="info-content" class="info-content"></div></dialog>
   <div id="toast" class="toast" role="status"></div>
 </body>

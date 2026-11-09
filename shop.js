@@ -7,6 +7,7 @@ const pageSize=12;
 const rosterPreviewSize=24;
 const gradeClasses={FES:'grade-fes',한정:'grade-limited',통상:'grade-regular'};
 const accountMoney=price=>`${Math.round(price*10000).toLocaleString('ko-KR')}원`;
+const previousPrice=account=>data.priceComparison?.previousPrices?.[account.num];
 let toastTimer;
 let consultationPending=false;
 function toast(message,duration=2500){
@@ -78,8 +79,11 @@ function accountCard(account,index){
   const students=orderedStudents(account),fes=students.filter(student=>student.grade==='FES').length;
   const badge=account.missing.length?'필수 학생 일부 미포함':applied.required.length?'필수 조건 충족':'';
   const shown=students.slice(0,rosterPreviewSize), remaining=students.slice(rosterPreviewSize);
+  const before=previousPrice(account);
   return `<article class="account-card">
-    <header class="account-header"><div><span class="account-number-label">계정번호</span><h3>${esc(account.num)}</h3></div><p class="account-price">${accountMoney(account.price)}</p></header>
+    <header class="account-header"><div><span class="account-number-label">계정번호</span><h3>${esc(account.num)}</h3></div>
+      <p class="account-price">${before>account.price?`<span class="account-price-before"><span class="sr-only">이전 공개가 </span><del>${accountMoney(before)}</del><span aria-hidden="true">→</span></span>`:''}<span><span class="sr-only">현재 판매가 </span>${accountMoney(account.price)}</span></p>
+    </header>
     <div class="account-body">
       <div class="account-meta"><strong>보유 학생 ${account.studentIds.length}명</strong><span>페스 ${fes}명</span>${applied.preferred.length?`<span>선호 ${account.preferredMatches}/${applied.preferred.length}명</span>`:''}${badge?`<span class="match-badge">${badge}</span>`:''}</div>
       <div class="account-students">${shown.map(mini).join('')}</div>
@@ -183,10 +187,30 @@ $('find-button').addEventListener('click',()=>search({scroll:true}));
 $('sort-order').addEventListener('change',()=>{if(!applied)return;applied.sort=$('sort-order').value;current=filterAccounts(data.accounts,{...applied,relaxed},data.students);page=1;renderAccounts();updateUrl(applied);});
 $('reset-filters').addEventListener('click',()=>{selected={required:[],preferred:[]};$('min-price').value=0;$('max-price').value='';renderSelected();renderStudents();search();});
 document.addEventListener('keydown',e=>{if(e.key==='/'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();$('student-search').focus();}});
+function showPriceNotice(){
+  const comparison=data.priceComparison;
+  if(!comparison||!Object.keys(comparison.previousPrices).length)return;
+  const key=`resetfactory.priceNotice.${comparison.sourceDate}`;
+  const today=new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Seoul'}).format(new Date());
+  try{if(localStorage.getItem(key)===today)return;}catch{}
+  const notice=$('price-notice');
+  const hasTwentyPercentReduction=data.accounts.some(account=>Math.round(account.price*10000)*5<=Math.round(previousPrice(account)*10000)*4);
+  $('price-notice-summary').textContent=hasTwentyPercentReduction
+    ?'20% 이상 가격 인하 적용'
+    :'계정 카드에서 갱신된 판매가를 확인하세요.';
+  const dismiss=()=>{notice.hidden=true;};
+  $('price-notice-close').addEventListener('click',dismiss);
+  $('price-notice-link').addEventListener('click',dismiss);
+  $('price-notice-today').addEventListener('click',()=>{
+    try{localStorage.setItem(key,today);}catch{}
+    dismiss();
+  });
+  notice.hidden=false;
+}
 async function init(){try{const r=await fetch('./catalog.json');if(!r.ok)throw new Error('재고를 불러오지 못했습니다.');data=await r.json();byId=new Map(data.students.map((student,order)=>[student.id,{...student,order}]));$('inventory-count').textContent=`${data.accounts.length.toLocaleString()}개`;$('source-date').textContent=`목록 업데이트 ${data.sourceDate}`;
   const params=new URLSearchParams(location.search);for(const k of ['must','wish']){const ids=(params.get(k)||'').split(',').filter(id=>byId.has(id));selected[k==='must'?'required':'preferred']=[...new Set(ids)];}selected.preferred=selected.preferred.filter(id=>!selected.required.includes(id));for(const [param,id]of [['min','min-price'],['max','max-price']]){const v=params.get(param);if(v!==null&&Number.isFinite(Number(v))&&Number(v)>=0)$(id).value=v;}
   const sort=params.get('sort');
   $('sort-order').value=['priceAsc','priceDesc'].includes(sort)?sort:'recommended';
-  renderStudents();renderSelected();search();
+  renderStudents();renderSelected();search();showPriceNotice();
 }catch(e){$('account-grid').innerHTML=`<div class="empty-state"><h3>목록을 불러오지 못했어요.</h3><p>${esc(e.message)}</p><button onclick="location.reload()">다시 시도</button></div>`;}}
 init();

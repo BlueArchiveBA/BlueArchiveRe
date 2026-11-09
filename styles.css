@@ -32,6 +32,28 @@ html:has(.shop-body) { scroll-padding-top: 65px; }
 .shop-body .primary { background: var(--shop-blue); color: #fff; }
 .shop-body .primary:hover { background: #10558e; }
 .shop-body .shop-intro { padding: 30px 0 6px; }
+.shop-body .price-notice {
+  position: fixed; z-index: 35; right: 16px; bottom: max(16px, env(safe-area-inset-bottom));
+  width: min(332px, calc(100% - 32px)); padding: 8px 12px 10px;
+  border: 1px solid #b4d3ec; border-radius: 12px;
+  background: #fff; box-shadow: 0 10px 32px #15395929; color: var(--shop-navy);
+}
+.shop-body .price-notice-top, .shop-body .price-notice-actions {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+}
+.shop-body .price-notice h2 { margin: 0; font-size: 18px; line-height: 1.3; }
+.shop-body .price-notice p { margin: 0; font-size: 14px; font-weight: 700; }
+.shop-body #price-notice-basis { margin-top: 2px; color: var(--shop-muted); font-size: 12px; font-weight: 400; }
+.shop-body .price-notice-actions { margin-top: 8px; }
+.shop-body .price-notice button, .shop-body .price-notice a {
+  display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+  min-height: 44px; padding: 4px 9px; border-radius: 7px; font-size: 13px; font-weight: 700;
+}
+.shop-body .price-notice button { background: #f5f9fd; border: 1px solid #c7d9ea; color: var(--shop-navy); }
+.shop-body .price-notice-close { min-width: 64px; }
+.shop-body .price-notice-close span { font-size: 19px; line-height: 1; }
+.shop-body .price-notice a { background: var(--shop-blue); color: #fff; }
+.shop-body .price-notice :is(button, a):focus-visible { outline: 2px solid var(--shop-blue); outline-offset: 2px; }
 .shop-body .shop-kicker { color: var(--shop-blue); font-size: 13px; font-weight: 800; }
 .shop-body .shop-intro h1 { margin: 2px 0 4px; color: var(--shop-navy); font-size: clamp(28px, 4vw, 42px); line-height: 1.22; }
 .shop-body .shop-intro > p:not(.shop-kicker) { color: var(--shop-muted); }
@@ -121,6 +143,8 @@ html:has(.shop-body) { scroll-padding-top: 65px; }
 .shop-body .account-number-label { display: block; color: #e1eeff; font-size: 12px; line-height: 1.25; }
 .shop-body .account-header h3 { margin: 2px 0 0; color: inherit; font-size: clamp(16px, 3vw, 20px); font-weight: 800; overflow-wrap: anywhere; line-height: 1.2; }
 .shop-body .account-price { margin: 0; color: inherit; font-size: clamp(19px, 3vw, 24px); font-weight: 800; white-space: nowrap; }
+.shop-body .account-price { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: baseline; gap: 0 9px; line-height: 1.25; }
+.shop-body .account-price-before { display: inline-flex; gap: 5px; color: #dceafb; font-size: 13px; font-weight: 600; letter-spacing: 0; }
 .shop-body .account-body { padding: 11px 16px 13px; }
 .shop-body .account-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin-bottom: 10px; color: var(--shop-muted); font-size: 13px; }
 .shop-body .account-meta strong { color: var(--shop-navy); }
@@ -191,6 +215,7 @@ html:has(.shop-body) { scroll-padding-top: 65px; }
   .shop-body .student-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); max-height: 255px; }
   .shop-body .account-students { grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .shop-body .account-body, .shop-body .account-header { padding-inline: 12px; }
+  .shop-body .account-price { flex-direction: column; align-items: flex-end; }
   .shop-body .account-actions .kakao-button { flex: 1; min-width: 0; }
   .shop-body .help-strip .kakao-button { margin-top: 10px; }
 }
