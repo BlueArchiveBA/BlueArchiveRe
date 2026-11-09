@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>리세팩토리 · 블루아카이브 한국 서버 리세계</title>
+  <!-- storefront-only -->
+  <meta name="description" content="리세팩토리의 블루아카이브 한국 서버 리세계. 원하는 학생과 예산으로 계정을 찾고, 구매 가이드와 구매금액의 15% 상당 쿠폰 혜택을 확인하세요.">
+  <link rel="canonical" href="https://bluearchivereset.netlify.app/">
+  <!-- /storefront-only -->
+  <link rel="icon" type="image/png" sizes="48x48" href="/static/images/favicon.png">
+  <link rel="stylesheet" href="styles.css?v=shop9">
+  <script type="module" src="shop.js?v=10"></script>
+</head>
+<body class="shop-body">
+  <header class="site-header"><div class="header-inner">
+    <a class="brand" href="./">리세팩토리</a>
+    <nav aria-label="구매 메뉴">
+      <a href="#finder">계정 찾기</a>
+      <!-- storefront-only -->
+      <a href="/guide/trade.html">구매 가이드</a>
+      <a class="kakao-button" id="site-consult" data-account-label="카카오톡 상담" href="https://open.kakao.com/o/s5B4sxji" target="_blank" rel="noopener noreferrer">카카오톡 1:1 상담 <span aria-hidden="true">↗</span></a>
+      <!-- /storefront-only -->
+    </nav>
+  </div></header>
+
+  <main class="shop-shell">
+    <section class="shop-intro" aria-labelledby="shop-title">
+      <p class="shop-kicker">한국 서버 · 직접 관리</p>
+      <h1 id="shop-title">블루아카이브 리세계</h1>
+      <p>원하는 학생과 예산으로 계정을 찾아보세요.</p>
+      <div class="shop-intro-actions"><a class="primary" href="#finder">학생·예산 선택 <span aria-hidden="true">↓</span></a><a href="#results">계정 목록 바로 보기</a></div>
+      <aside class="shop-coupon" aria-labelledby="coupon-title">
+        <div>
+          <p class="shop-kicker">계정 구매 상시 혜택</p>
+          <h2 id="coupon-title">구매금액의 <strong>15% 상당</strong> 쿠폰 지급</h2>
+          <p>다음 구매에 사용 · 양도 가능 · 결제당 1장 · 쿠폰 사용 후 최소 결제 10,000원</p>
+          <a href="/guide/coupon-guide.html">쿠폰 사용 조건과 예시 보기 <span aria-hidden="true">→</span></a>
+        </div>
+        <img src="assets/coupon-promo.png" alt="" width="686" height="485">
+      </aside>
+      <nav class="shop-guides" aria-label="구매 도움말">
+        <a href="/guide/trade.html">구매·거래 가이드 <span aria-hidden="true">→</span></a>
+        <a href="/guide/faq.html">자주 묻는 질문 (FAQ) <span aria-hidden="true">→</span></a>
+        <a href="/guide/coupon-guide.html">쿠폰 가이드 <span aria-hidden="true">→</span></a>
+      </nav>
+      <div class="inventory-bar"><span>판매 중 <strong id="inventory-count">—</strong></span><span id="source-date">재고 확인 중</span></div>
+    </section>
+
+    <section class="finder" id="finder" aria-labelledby="finder-title">
+      <div class="section-heading"><div><span class="shop-kicker">1 · 조건 선택</span><h2 id="finder-title">학생과 예산 고르기</h2></div><button class="text-button" id="reset-filters" type="button">조건 초기화</button></div>
+      <div class="finder-layout">
+        <div class="student-panel">
+          <label class="search-box" for="student-search"><span aria-hidden="true">⌕</span><input id="student-search" type="search" placeholder="학생 이름 또는 약칭 · 예: 수나코" aria-label="학생 이름 또는 약칭 검색"></label>
+          <div class="filter-tabs" role="tablist" aria-label="학생 분류" id="grade-tabs">
+            <button class="active" data-grade="추천 학생" role="tab" aria-selected="true" type="button">추천 학생</button>
+            <button data-grade="FES" role="tab" aria-selected="false" type="button">FES</button>
+            <button data-grade="한정" role="tab" aria-selected="false" type="button">한정</button>
+            <button data-grade="통상" role="tab" aria-selected="false" type="button">통상</button>
+            <button data-grade="전체" role="tab" aria-selected="false" type="button">전체</button>
+          </div>
+          <div class="selection-mode"><span class="mode-label">학생 선택 방식</span><button class="active" id="mode-required" aria-pressed="true" type="button">필수</button><button id="mode-preferred" aria-pressed="false" type="button">선호</button><span class="push-right" id="student-visible-count"></span></div>
+          <div class="grade-key" aria-label="학생 테두리 색상"><span class="grade-fes">페스</span><span class="grade-limited">한정</span><span class="grade-regular">통상</span></div>
+          <div class="student-grid" id="student-grid"></div>
+        </div>
+        <aside class="conditions" aria-label="검색 조건">
+          <div class="condition-title"><h3>선택한 조건</h3><span class="count-bubble" id="selected-count">0</span></div>
+          <div class="selected-block"><span class="field-label">필수 학생</span><div class="selected-chips" id="required-chips"></div></div>
+          <div class="selected-block"><span class="field-label">선호 학생</span><div class="selected-chips" id="preferred-chips"></div></div>
+          <label class="field-label" for="min-price">예산 범위 <span>(만원)</span></label>
+          <div class="price-range"><input type="number" min="0" max="999" step="0.0001" id="min-price" value="0" aria-label="최소 가격"><span>~</span><input type="number" min="0" max="999" step="0.0001" id="max-price" placeholder="제한 없음" aria-label="최대 가격"></div>
+          <div class="budget-presets"><button data-budget="5" type="button">5만원 이하</button><button data-budget="10" type="button">10만원 이하</button><button data-budget="20" type="button">20만원 이하</button></div>
+          <button class="primary" id="find-button" type="button">조건에 맞는 계정 찾기 <span aria-hidden="true">→</span></button>
+          <p id="filter-status" role="status" class="filter-status"></p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="results-section" id="results" aria-labelledby="results-title">
+      <div class="section-heading result-heading"><div><span class="shop-kicker">2 · 계정 확인</span><h2 id="results-title">검색 결과 <span id="result-count">—</span></h2><p id="result-description">목록을 불러오는 중입니다.</p></div><label class="sort-label">정렬<select id="sort-order"><option value="recommended" selected>운영자 기준 추천순</option><option value="priceAsc">낮은 가격순</option><option value="priceDesc">높은 가격순</option></select></label></div>
+      <!-- storefront-only -->
+      <div class="shop-consult-hint"><strong>마음에 드는 계정을 찾았나요?</strong><p>계정의 <strong>카카오톡 상담</strong>을 누르면 번호와 가격을 복사하고 오픈채팅을 엽니다. 채팅창에 복사한 내용을 붙여넣어 주세요.</p></div>
+      <!-- /storefront-only -->
+      <!-- idfarm-hint -->
+      <div class="grade-key result-grade-key" aria-label="학생 테두리 색상과 검색 조건 표시"><span class="grade-fes">페스</span><span class="grade-limited">한정</span><span class="grade-regular">통상</span><span class="key-required">✓ 필수</span><span class="key-preferred">♥ 선호</span></div>
+      <div id="account-grid" class="account-grid" aria-live="polite"></div><div id="pagination" class="pagination"></div>
+    </section>
+
+    <!-- storefront-only -->
+    <section class="help-strip"><div><h2>원하는 조합을 함께 찾아드려요</h2><p>예산과 꼭 포함할 학생을 알려주세요.</p></div><a class="kakao-button" href="https://open.kakao.com/o/s5B4sxji" target="_blank" rel="noopener noreferrer">카카오톡 1:1 상담 <span aria-hidden="true">↗</span></a></section>
+    <!-- /storefront-only -->
+  </main>
+  <footer><span class="brand-word">리세팩토리</span><p>블루아카이브 한국 서버 리세계</p></footer>
+  <dialog id="info-dialog" aria-labelledby="info-title"><div class="dialog-top"><h2 id="info-title"></h2><button class="icon-button" data-close="info-dialog" aria-label="닫기" type="button">×</button></div><div id="info-content" class="info-content"></div></dialog>
+  <div id="toast" class="toast" role="status"></div>
+</body>
+</html>
