@@ -7,4 +7,5 @@
 /guide/faq           /guide/faq.html           200
 /guide/coupon-guide  /guide/coupon-guide.html  200
 /guide/choose        /guide/choose.html        200
-/guide/community     /guide/community.html     200
+/guide/community       /guide/choose           301!
+/guide/community.html  /guide/choose           301!
