@@ -2,14 +2,15 @@ import { timingSafeEqual } from 'node:crypto';
 import { getStore } from '@netlify/blobs';
 
 const DAY_MS = 86_400_000;
-const HISTORY_DAYS = 30;
+const LEGACY_SLOTS = 30;
+const READ_BATCH_SIZE = 32;
 const MAX_CONDITIONS = 2000;
 const dateFormat = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Seoul' });
 const json = (body, status = 200) => Response.json(body, { status, headers: { 'Cache-Control': 'no-store' } });
 
-function bucket(dayNumber) {
-  return `day-${dayNumber % HISTORY_DAYS}`;
-}
+const legacyBucket = dayNumber => `day-${dayNumber % LEGACY_SLOTS}`;
+const datedBucket = date => `date-${date}`;
+const isoDay = dayNumber => new Date(dayNumber * DAY_MS).toISOString().slice(0, 10);
 
 function normalizeCondition(data) {
   if (!data || !['website', 'idfarm'].includes(data.channel)) return null;
@@ -26,8 +27,9 @@ function normalizeCondition(data) {
   return [data.channel, required, preferred, data.minBand, data.maxBand, minFes];
 }
 
-async function countSearch(store, dayNumber, condition) {
-  const key = bucket(dayNumber);
+async function countSearch(store, today, condition) {
+  const dayNumber = Date.parse(today) / DAY_MS;
+  const key = datedBucket(today);
   const match = JSON.stringify(condition);
   for (let attempt = 0; attempt < 6; attempt++) {
     const entry = await store.getWithMetadata(key, { type: 'json' });
@@ -48,26 +50,70 @@ function increment(map, key, count) {
 
 const top = map => [...map].sort(([a, aCount], [b, bCount]) => bCount - aCount || a.localeCompare(b)).slice(0, 15);
 
-async function readSummary(store, today, days, channel) {
-  const end = Date.parse(today) / DAY_MS;
-  const offsets = Array.from({ length: days }, (_, index) => end - index);
-  const entries = await Promise.all(offsets.map(day => store.get(bucket(day), { type: 'json' })));
+function summaryFilter(params, today) {
+  const channel = params.get('channel') ?? 'all';
+  if (!['all', 'website', 'idfarm'].includes(channel)) return null;
+  const period = params.get('period');
+  if (period === null) {
+    const days = Number(params.get('days') ?? 28);
+    if (![7, 28].includes(days)) return null;
+    return { channel, days, from: isoDay(Date.parse(today) / DAY_MS - days + 1) };
+  }
+  if (period === 'all') return { channel, period, prefix: '', from: null };
+  const selected = params.get(period);
+  if (period === 'month' && /^[1-9]\d{3}-(0[1-9]|1[0-2])$/.test(selected) && selected <= today.slice(0, 7)) {
+    return { channel, period, prefix: selected, from: `${selected}-01` };
+  }
+  if (period === 'year' && /^[1-9]\d{3}$/.test(selected) && selected <= today.slice(0, 4)) {
+    return { channel, period, prefix: selected, from: `${selected}-01-01` };
+  }
+  return null;
+}
+
+async function summaryKeys(store, today, { days, prefix }) {
+  if (days) {
+    const end = Date.parse(today) / DAY_MS;
+    return Array.from({ length: days }, (_, index) => end - index)
+      .flatMap(day => [datedBucket(isoDay(day)), legacyBucket(day)]);
+  }
+  const { blobs } = await store.list({ prefix: datedBucket(prefix) });
+  return [...blobs.map(blob => blob.key), ...Array.from({ length: LEGACY_SLOTS }, (_, index) => `day-${index}`)];
+}
+
+async function readSummary(store, today, filter) {
+  const { channel, prefix = '', from } = filter;
+  const keys = await summaryKeys(store, today, filter);
   const required = new Map(), preferred = new Map(), budgets = new Map(), conditions = new Map(), fesCounts = new Map();
   let total = 0;
-  for (const [index, entry] of entries.entries()) {
-    if (entry?.day !== offsets[index]) continue;
-    for (const [key, count] of Object.entries(entry.counts)) {
-      const [source, must, wish, min, max, minFes = 0] = JSON.parse(key);
-      if (channel !== 'all' && channel !== source) continue;
-      total += count;
-      for (const student of must) increment(required, student, count);
-      for (const student of wish) increment(preferred, student, count);
-      increment(budgets, JSON.stringify([min, max]), count);
-      increment(fesCounts, String(minFes), count);
-      if (must.length || wish.length || minFes) increment(conditions, JSON.stringify([must, wish, min, max, minFes]), count);
+  let firstRecorded = null, lastRecorded = null;
+  // Old ring slots and new date keys each hold distinct writes, including on rollout day.
+  for (let offset = 0; offset < keys.length; offset += READ_BATCH_SIZE) {
+    const batch = keys.slice(offset, offset + READ_BATCH_SIZE);
+    const entries = await Promise.all(batch.map(key => store.get(key, { type: 'json' })));
+    for (const [index, entry] of entries.entries()) {
+      if (!entry || !Number.isInteger(entry.day)) continue;
+      const date = isoDay(entry.day);
+      const bucket = batch[index];
+      if (bucket !== datedBucket(date) && bucket !== legacyBucket(entry.day)) continue;
+      if ((from && date < from) || date > today || !date.startsWith(prefix)) continue;
+      const previousTotal = total;
+      for (const [key, count] of Object.entries(entry.counts)) {
+        const [source, must, wish, min, max, minFes = 0] = JSON.parse(key);
+        if (channel !== 'all' && channel !== source) continue;
+        total += count;
+        for (const student of must) increment(required, student, count);
+        for (const student of wish) increment(preferred, student, count);
+        increment(budgets, JSON.stringify([min, max]), count);
+        increment(fesCounts, String(minFes), count);
+        if (must.length || wish.length || minFes) increment(conditions, JSON.stringify([must, wish, min, max, minFes]), count);
+      }
+      if (total > previousTotal) {
+        if (!firstRecorded || date < firstRecorded) firstRecorded = date;
+        if (!lastRecorded || date > lastRecorded) lastRecorded = date;
+      }
     }
   }
-  return { total, required: top(required), preferred: top(preferred),
+  return { ...(filter.period ? { firstRecorded, lastRecorded } : {}), total, required: top(required), preferred: top(preferred),
     budgets: top(budgets).map(([key, count]) => [...JSON.parse(key), count]),
     fesCounts: top(fesCounts).map(([minimum, count]) => [Number(minimum), count]),
     conditions: top(conditions).map(([key, count]) => {
@@ -94,7 +140,7 @@ export async function handleSearchStats(request, token, openStore, now = new Dat
       return json({ error: 'invalid_condition' }, 400);
     }
     if (!condition) return json({ error: 'invalid_condition' }, 400);
-    if (!await countSearch(openStore(), Date.parse(today) / DAY_MS, condition)) {
+    if (!await countSearch(openStore(), today, condition)) {
       return json({ error: 'temporarily_unavailable' }, 503);
     }
     return new Response(null, { status: 204, headers: { 'Cache-Control': 'no-store' } });
@@ -106,12 +152,10 @@ export async function handleSearchStats(request, token, openStore, now = new Dat
     if (supplied.length !== expected.length || !timingSafeEqual(supplied, expected)) {
       return json({ error: 'unauthorized' }, 401);
     }
-    const days = Number(url.searchParams.get('days') ?? 28);
-    const channel = url.searchParams.get('channel') ?? 'all';
-    if (![7, 28].includes(days) || !['all', 'website', 'idfarm'].includes(channel)) {
-      return json({ error: 'invalid_filter' }, 400);
-    }
-    return json({ today, days, channel, ...await readSummary(openStore(), today, days, channel) });
+    const filter = summaryFilter(url.searchParams, today);
+    if (!filter) return json({ error: 'invalid_filter' }, 400);
+    const range = filter.days ? { days: filter.days } : { period: filter.period };
+    return json({ today, ...range, channel: filter.channel, ...await readSummary(openStore(), today, filter) });
   }
   return json({ error: 'method_not_allowed' }, 405);
 }
