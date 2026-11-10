@@ -1,4 +1,5 @@
-import {esc, normalize, filterAccounts} from './core.mjs';
+import {esc, normalize, filterAccounts, countFesStudents} from './core.mjs?v=9';
+import {createFavorites} from './favorites.mjs?v=1';
 
 const $=id=>document.getElementById(id);
 const siteConsult=$('site-consult');
@@ -10,12 +11,19 @@ const accountMoney=price=>`${Math.round(price*10000).toLocaleString('ko-KR')}원
 const previousPrice=account=>data.priceComparison?.previousPrices?.[account.num];
 let toastTimer;
 let consultationPending=false;
+const favorites=createFavorites({getCatalog:()=>data,toast,consultLink});
 function toast(message,duration=2500){
   const notice=$('toast');
   notice.textContent=message;
   notice.classList.add('show');
+  const feedback=document.querySelector('.favorites-dialog[open] [data-favorites-feedback]');
+  if(feedback)feedback.textContent=message;
   clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>notice.classList.remove('show'),duration);
+  toastTimer=setTimeout(()=>{
+    notice.classList.remove('show');
+    const current=document.querySelector('.favorites-dialog[open] [data-favorites-feedback]');
+    if(current)current.textContent='';
+  },duration);
 }
 function portrait(s){return s.image?`<img src="${esc(s.image)}" alt="" loading="lazy" width="80" height="80">`:`<span class="avatar-fallback">${esc(s.name.slice(0,1))}</span>`;}
 function displayGrade(student){return student.grade==='FES'||student.grade==='한정'?student.grade:'통상';}
@@ -53,10 +61,35 @@ function renderSelected(){
     }).join('')||'<span class="empty-selection">선택한 학생 없음</span>';
   }
   $('selected-count').textContent=selected.required.length+selected.preferred.length;
+  updateSearchDock();
 }
-function markFiltersChanged(){ $('filter-status').textContent='계정 찾기를 누르면 변경한 조건으로 검색합니다.'; }
+function markFiltersChanged(){ $('filter-status').textContent='계정 찾기를 누르면 변경한 조건으로 검색합니다.'; updateSearchDock(); }
+function updateSearchDock(){
+  const dock=$('mobile-search-dock');
+  if(!dock)return;
+  const selectedCount=selected.required.length+selected.preferred.length;
+  $('dock-selection').textContent=selectedCount?`학생 ${selectedCount}명 선택`:'학생 조건 없음';
+  const minimum=Number($('min-fes').value)||0;
+  const max=$('max-price').value,min=Number($('min-price').value)||0;
+  const budget=max!==''?`${min?`${min}~`:''}${Number(max)}만원${min?'':' 이하'}`:min?`${min}만원 이상`:'예산 제한 없음';
+  $('dock-options').textContent=(minimum?`페스 ${minimum}명 이상 · `:'')+budget;
+  const finder=$('finder').getBoundingClientRect(),button=$('find-button').getBoundingClientRect();
+  const header=document.querySelector('.site-header').getBoundingClientRect().bottom;
+  const buttonVisible=button.top>=header&&button.bottom<=window.innerHeight;
+  const finderVisible=finder.top<window.innerHeight-100&&finder.bottom>header+100;
+  const hidden=!(window.innerWidth<=700&&finderVisible&&!buttonVisible&&$('price-notice').hidden&&!document.querySelector('dialog[open]'));
+  if(dock.hidden!==hidden)dock.hidden=hidden;
+}
 function selectStudent(id){const other=mode==='required'?'preferred':'required';selected[other]=selected[other].filter(x=>x!==id);if(selected[mode].includes(id))selected[mode]=selected[mode].filter(x=>x!==id);else selected[mode].push(id);renderSelected();renderStudents();markFiltersChanged();}
-function getFilters(){const min=Number($('min-price').value),max=$('max-price').value===''?Infinity:Number($('max-price').value);if(!Number.isFinite(min)||min<0||max<0||min>max)throw new Error('최소·최대 가격 범위를 확인해 주세요.');return {required:[...selected.required],preferred:[...selected.preferred],min,max,sort:$('sort-order').value};}
+function renderFesOptions(){
+  const maximum=data.accounts.reduce((max,account)=>Math.max(max,countFesStudents(account.studentIds,data.students)),0);
+  const start=Math.min(8,maximum);
+  $('min-fes').innerHTML='<option value="0">상관없음 · 전체</option>'+
+    (maximum?Array.from({length:maximum-start+1},(_,index)=>start+index)
+      .map(count=>`<option value="${count}">${count}명 이상</option>`).join(''):'');
+  $('min-fes').value='0';
+}
+function getFilters(){const min=Number($('min-price').value),max=$('max-price').value===''?Infinity:Number($('max-price').value),minFes=Number($('min-fes').value);if(!Number.isFinite(min)||min<0||max<0||min>max)throw new Error('최소·최대 가격 범위를 확인해 주세요.');return {required:[...selected.required],preferred:[...selected.preferred],min,max,minFes,sort:$('sort-order').value};}
 function search({scroll=false,relax=false,record=false}={}){
   if(!data)return;
   try{
@@ -78,6 +111,7 @@ function search({scroll=false,relax=false,record=false}={}){
           preferred:filters.preferred,
           minBand:band(filters.min),
           maxBand:Number.isFinite(filters.max)?band(filters.max):null,
+          minFes:filters.minFes,
         }),
         keepalive:true,
         referrerPolicy:'no-referrer',
@@ -103,7 +137,7 @@ function consultLink(account){
 }
 
 function accountCard(account,index){
-  const students=orderedStudents(account),fes=students.filter(student=>student.grade==='FES').length;
+  const students=orderedStudents(account),fes=countFesStudents(account.studentIds,data.students);
   const badge=account.missing.length?'필수 학생 일부 미포함':applied.required.length?'필수 조건 충족':'';
   const shown=students.slice(0,rosterPreviewSize), remaining=students.slice(rosterPreviewSize);
   const before=previousPrice(account);
@@ -112,7 +146,7 @@ function accountCard(account,index){
       <p class="account-price">${before>account.price?`<span class="account-price-before"><span class="sr-only">이전 공개가 </span><del>${accountMoney(before)}</del><span aria-hidden="true">→</span></span>`:''}<span><span class="sr-only">현재 판매가 </span>${accountMoney(account.price)}</span></p>
     </header>
     <div class="account-body">
-      <div class="account-meta"><strong>보유 학생 ${account.studentIds.length}명</strong><span>페스 ${fes}명</span>${applied.preferred.length?`<span>선호 ${account.preferredMatches}/${applied.preferred.length}명</span>`:''}${badge?`<span class="match-badge">${badge}</span>`:''}</div>
+      <div class="account-meta"><strong>보유 학생 ${account.studentIds.length}명</strong><span>페스 ${fes}명</span>${applied.preferred.length?`<span>선호 ${account.preferredMatches}/${applied.preferred.length}명</span>`:''}${badge?`<span class="match-badge">${badge}</span>`:''}${favorites.cardButton(account)}</div>
       <div class="account-students">${shown.map(mini).join('')}</div>
       ${remaining.length?`<button type="button" class="roster-toggle" data-open-roster aria-expanded="false" aria-controls="roster-${index}">전체 학생 보기</button>
         <div class="roster-more" id="roster-${index}" tabindex="-1" hidden><div class="account-students">${remaining.map(mini).join('')}</div><button type="button" class="roster-toggle" data-close-roster>학생 접기</button></div>`:''}
@@ -130,10 +164,15 @@ function accountCard(account,index){
   </article>`;
 }
 
-function renderAccounts(){const count=current.length;$('result-count').textContent=`${count.toLocaleString()}개`;$('result-description').textContent=relaxed?'필수 조건을 완화한 목록입니다. 각 계정에서 빠진 학생을 확인하세요.':`필수 ${applied.required.length}명 · 선호 ${applied.preferred.length}명 · ${accountMoney(applied.min)} ~ ${Number.isFinite(applied.max)?accountMoney(applied.max):'상한 없음'}`;
-  if(!count){$('account-grid').innerHTML=`<div class="empty-state"><h3>현재 조건에 맞는 계정이 없어요.</h3><p>예산을 넓히거나 꼭 포함할 학생을 줄여보세요.</p>${applied.required.length?'<button id="relax-button">같은 예산에서 가까운 조합 보기 →</button>':''}</div>`;$('pagination').innerHTML='';$('relax-button')?.addEventListener('click',()=>search({relax:true}));return;}
+function renderAccounts(){const count=current.length;$('result-count').textContent=`${count.toLocaleString()}개`;$('result-description').textContent=relaxed
+    ?`필수 학생 조건을 완화한 목록입니다. 각 계정에서 빠진 학생을 확인하세요.${applied.minFes?` 페스 ${applied.minFes}명 이상 조건은 유지합니다.`:''}`
+    :`필수 ${applied.required.length}명 · 선호 ${applied.preferred.length}명 · ${applied.minFes?`페스 ${applied.minFes}명 이상 · `:''}${accountMoney(applied.min)} ~ ${Number.isFinite(applied.max)?accountMoney(applied.max):'상한 없음'}`;
+  if(!count){$('account-grid').innerHTML=`<div class="empty-state"><h3>현재 조건에 맞는 계정이 없어요.</h3><p>예산을 넓히거나 ${applied.minFes?'페스 보유 수·필수 학생 조건을 낮춰보세요.':'꼭 포함할 학생을 줄여보세요.'}</p>${applied.required.length?`<button id="relax-button">같은 예산${applied.minFes?'·페스 조건':''}에서 가까운 조합 보기 →</button>`:''}</div>`;$('pagination').innerHTML='';$('pagination-top').innerHTML='';$('pagination-top').hidden=true;$('relax-button')?.addEventListener('click',()=>search({relax:true}));favorites.refreshButtons();return;}
   $('account-grid').innerHTML=current.slice((page-1)*pageSize,page*pageSize).map(accountCard).join('');
   const pages=Math.ceil(count/pageSize);let buttons=[];for(let n=1;n<=pages;n++){if(n===1||n===pages||Math.abs(n-page)<=2)buttons.push(`<button data-page="${n}" class="${n===page?'active':''}" ${n===page?'aria-current="page"':''}>${n}</button>`);else if(n===page-3||n===page+3)buttons.push('<span>…</span>');}$('pagination').innerHTML=pages>1?`<button data-page="${page-1}" ${page===1?'disabled':''} aria-label="이전 페이지">‹</button>${buttons.join('')}<button data-page="${page+1}" ${page===pages?'disabled':''} aria-label="다음 페이지">›</button>`:'';
+  $('pagination-top').hidden=pages<=1;
+  $('pagination-top').innerHTML=pages>1?`<span><strong>${page}</strong> / ${pages} 페이지</span><div><button type="button" data-page="${page-1}" ${page===1?'disabled':''}>‹ 이전</button><button type="button" data-page="${page+1}" ${page===pages?'disabled':''}>다음 ›</button></div>`:'';
+  favorites.refreshButtons();
 }
 async function copyAccount(num,consultUrl){
   const account=data.accounts.find(item=>item.num===num);
@@ -206,13 +245,15 @@ document.addEventListener('click',event=>{
   }
 });
 for (const id of ['min-price','max-price']) $(id).addEventListener('input',markFiltersChanged);
+$('min-fes').addEventListener('change',markFiltersChanged);
 document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d){const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();}}));
 $('student-search').addEventListener('input',renderStudents);
 $('grade-tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;grade=b.dataset.grade;document.querySelectorAll('#grade-tabs button').forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-selected',String(x===b));});renderStudents();});
 for(const type of ['required','preferred'])$(`mode-${type}`).addEventListener('click',()=>{mode=type;for(const t of ['required','preferred']){$(`mode-${t}`).classList.toggle('active',t===type);$(`mode-${t}`).setAttribute('aria-pressed',String(t===type));}});
 $('find-button').addEventListener('click',()=>search({scroll:true,record:true}));
+$('dock-find-button').addEventListener('click',()=>$('find-button').click());
 $('sort-order').addEventListener('change',()=>{if(!applied)return;applied.sort=$('sort-order').value;current=filterAccounts(data.accounts,{...applied,relaxed},data.students);page=1;renderAccounts();});
-$('reset-filters').addEventListener('click',()=>{selected={required:[],preferred:[]};$('min-price').value=0;$('max-price').value='';renderSelected();renderStudents();search();});
+$('reset-filters').addEventListener('click',()=>{selected={required:[],preferred:[]};$('min-price').value=0;$('max-price').value='';$('min-fes').value='0';renderSelected();renderStudents();search();});
 document.addEventListener('keydown',e=>{if(e.key==='/'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();$('student-search').focus();}});
 function showPriceNotice(){
   const comparison=data.priceComparison;
@@ -236,12 +277,18 @@ function showPriceNotice(){
 }
 async function init(){try{const r=await fetch('./catalog.json');if(!r.ok)throw new Error('재고를 불러오지 못했습니다.');data=await r.json();byId=new Map(data.students.map((student,order)=>[student.id,{...student,order}]));$('inventory-count').textContent=`${data.accounts.length.toLocaleString()}개`;$('source-date').textContent=`목록 업데이트 ${data.sourceDate}`;
   const url=new URL(location.href);
-  for(const key of ['must','wish','min','max','sort'])if(url.searchParams.has(key))url.searchParams.delete(key);
+  for(const key of ['must','wish','min','max','sort','minFes'])if(url.searchParams.has(key))url.searchParams.delete(key);
   if(url.href!==location.href)history.replaceState(null,'',url.href);
   $('student-search').value='';
   $('min-price').value='0';
   $('max-price').value='';
   $('sort-order').value='recommended';
-  renderStudents();renderSelected();search();showPriceNotice();
+  favorites.init();renderFesOptions();renderStudents();renderSelected();search();showPriceNotice();
+  const observer=new IntersectionObserver(updateSearchDock);
+  observer.observe($('finder'));observer.observe($('find-button'));
+  new MutationObserver(updateSearchDock).observe(document.body,{subtree:true,attributes:true,attributeFilter:['hidden','open']});
+  window.addEventListener('scroll',updateSearchDock,{passive:true});
+  window.addEventListener('resize',updateSearchDock);
+  updateSearchDock();
 }catch(e){$('account-grid').innerHTML=`<div class="empty-state"><h3>목록을 불러오지 못했어요.</h3><p>${esc(e.message)}</p><button onclick="location.reload()">다시 시도</button></div>`;}}
 init();

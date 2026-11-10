@@ -6,6 +6,6 @@
     "@netlify/blobs": "11.1.8"
   },
   "scripts": {
-    "test": "node --test tests/core.test.mjs tests/research.test.mjs"
+    "test": "node --test tests/core.test.mjs tests/research.test.mjs tests/coupons.test.mjs tests/search-stats.test.mjs tests/publish-state.test.mjs tests/favorites.test.mjs"
   }
 }

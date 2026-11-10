@@ -19,9 +19,11 @@ function normalizeCondition(data) {
   const band = value => Number.isInteger(value) && value >= 0 && value <= 995 && value % 5 === 0;
   if (!band(data.minBand) || !(data.maxBand === null ||
       band(data.maxBand) && data.minBand <= data.maxBand)) return null;
+  const minFes = data.minFes === undefined ? 0 : data.minFes;
+  if (!Number.isInteger(minFes) || minFes < 0 || minFes > 500) return null;
   const required = [...new Set(data.required)].sort();
   const preferred = [...new Set(data.preferred)].filter(id => !required.includes(id)).sort();
-  return [data.channel, required, preferred, data.minBand, data.maxBand];
+  return [data.channel, required, preferred, data.minBand, data.maxBand, minFes];
 }
 
 async function countSearch(store, dayNumber, condition) {
@@ -50,23 +52,28 @@ async function readSummary(store, today, days, channel) {
   const end = Date.parse(today) / DAY_MS;
   const offsets = Array.from({ length: days }, (_, index) => end - index);
   const entries = await Promise.all(offsets.map(day => store.get(bucket(day), { type: 'json' })));
-  const required = new Map(), preferred = new Map(), budgets = new Map(), conditions = new Map();
+  const required = new Map(), preferred = new Map(), budgets = new Map(), conditions = new Map(), fesCounts = new Map();
   let total = 0;
   for (const [index, entry] of entries.entries()) {
     if (entry?.day !== offsets[index]) continue;
     for (const [key, count] of Object.entries(entry.counts)) {
-      const [source, must, wish, min, max] = JSON.parse(key);
+      const [source, must, wish, min, max, minFes = 0] = JSON.parse(key);
       if (channel !== 'all' && channel !== source) continue;
       total += count;
       for (const student of must) increment(required, student, count);
       for (const student of wish) increment(preferred, student, count);
       increment(budgets, JSON.stringify([min, max]), count);
-      if (must.length || wish.length) increment(conditions, JSON.stringify([must, wish, min, max]), count);
+      increment(fesCounts, String(minFes), count);
+      if (must.length || wish.length || minFes) increment(conditions, JSON.stringify([must, wish, min, max, minFes]), count);
     }
   }
   return { total, required: top(required), preferred: top(preferred),
     budgets: top(budgets).map(([key, count]) => [...JSON.parse(key), count]),
-    conditions: top(conditions).map(([key, count]) => [...JSON.parse(key), count]) };
+    fesCounts: top(fesCounts).map(([minimum, count]) => [Number(minimum), count]),
+    conditions: top(conditions).map(([key, count]) => {
+      const [must, wish, min, max, minFes] = JSON.parse(key);
+      return [must, wish, min, max, count, minFes];
+    }) };
 }
 
 export async function handleSearchStats(request, token, openStore, now = new Date()) {

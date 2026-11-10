@@ -126,6 +126,29 @@ html:has(.shop-body) { scroll-padding-top: 65px; }
 .shop-body .selected-chips .chip:hover { border-color: currentColor; }
 .shop-body .selected-chips .chip-remove { font-size: 16px; line-height: 1; }
 .shop-body .price-range input, .shop-body .sort-label select { font-size: 14px; }
+.shop-body .fes-filter { margin: 0 0 14px; }
+.shop-body .fes-filter select { width: 100%; min-height: 44px; border-color: var(--shop-line); color: var(--shop-navy); font-size: 14px; }
+.shop-body .pagination-top{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border:1px solid var(--shop-line);border-radius:9px;padding:9px 12px;margin:0 0 14px;font-size:14px;color:var(--shop-navy)}
+.shop-body .pagination-top[hidden]{display:none}
+.shop-body .pagination-top strong{color:var(--shop-blue)}
+.shop-body .pagination-top>div{display:flex;gap:7px}
+.shop-body .pagination-top button{min-height:44px;min-width:66px;padding:6px 11px;border-color:var(--shop-line);font-weight:700}
+.shop-body .pagination-top button:not(:disabled):last-child{background:var(--shop-blue);border-color:var(--shop-blue);color:#fff}
+.shop-body .pagination button{min-height:40px;min-width:35px}
+.shop-body .mobile-search-dock{display:none}
+.shop-body .site-header .favorites-open{display:inline-flex;gap:5px;align-items:center;justify-content:center;min-height:40px;border:1px solid var(--shop-line);background:#f3f9ff;color:var(--shop-blue);border-radius:8px;padding:6px 10px;font-size:13px;font-weight:800;white-space:nowrap}
+.shop-body .favorites-label-short{display:none}
+@media(max-width:700px){
+  .shop-body .mobile-search-dock:not([hidden]){position:fixed;z-index:30;inset:auto 0 0;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px max(12px,env(safe-area-inset-bottom));background:#fff;border-top:1px solid #b7d5eb;box-shadow:0 -4px 18px #16395414;color:var(--shop-navy)}
+  .shop-body .mobile-search-dock>div{min-width:0}
+  .shop-body .mobile-search-dock strong{display:block;font-size:15px}
+  .shop-body .mobile-search-dock small{display:block;font-size:12px;color:var(--shop-muted);margin-top:3px;overflow-wrap:anywhere}
+  .shop-body .mobile-search-dock button{min-height:48px;min-width:136px;font-size:15px;flex-shrink:0}
+  .shop-body .site-header nav>a[href="#finder"]{display:none}
+  .shop-body .favorites-label-wide{display:none}
+  .shop-body .favorites-label-short{display:inline;font-size:19px;line-height:1}
+  .shop-body .site-header .favorites-open{padding:6px 9px;min-width:48px;min-height:44px}
+}
 .shop-body .filter-status { margin: 6px 0 0; color: var(--shop-blue); font-size: 13px; }
 .shop-body .filter-status:empty { display: none; }
 .shop-body .search-stats-note { margin: 6px 0 0; color: var(--shop-muted); font-size: 12px; }
@@ -262,3 +285,32 @@ html:has(.shop-body) { scroll-padding-top: 65px; }
   .shop-body .student-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .shop-body .account-students { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 }
+
+/* Coupon ledger period controls and summaries; scoped to the operator panel. */
+.coupon-shortcuts{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.coupon-shortcuts a{display:inline-flex;align-items:center;min-height:40px;padding:8px 13px;border:1px solid #c5ddec;border-radius:8px;background:#f1f8fd;color:#245f8f;font-size:12px;font-weight:700}
+.coupon-history-controls{align-items:flex-end}
+.coupon-history-controls label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:#526b80}
+.coupon-history-controls label[hidden]{display:none}
+.coupon-history-controls select,.coupon-history-controls input{min-height:40px;font-size:13px}
+.coupon-period-label{font-size:15px;font-weight:800;color:#254c70;margin-bottom:12px}
+.coupon-history-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.coupon-summary-card{padding:17px;border:1px solid #d7e6f1;border-radius:10px;background:#f5faff;min-width:0}
+.coupon-summary-card span,.coupon-summary-card small{display:block;color:#536e83;font-size:12px}
+.coupon-summary-card strong{display:block;color:#163b5c;font-size:clamp(19px,2vw,26px);line-height:1.4;margin:8px 0;overflow-wrap:anywhere}
+.coupon-history-help{margin:10px 0 18px;color:#5c7082}
+.coupon-breakdown{border:1px solid #dce6ee;border-radius:10px;padding:12px 14px;margin:16px 0}
+.coupon-breakdown summary{cursor:pointer;font-size:13px;font-weight:700;color:#365a78;min-height:28px}
+.coupon-breakdown .table-scroll{margin-top:8px}
+.coupon-breakdown table{min-width:450px}
+.coupon-history-range{font-size:12px;font-weight:700;color:#526b80;margin-top:20px;scroll-margin-top:20px}
+.coupon-history-search{align-items:flex-end;margin-top:20px}
+.coupon-history-search label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:#526b80}
+.coupon-history-search input{width:260px;min-height:42px;font-size:13px}
+.coupon-history-search select,.coupon-history-search button{min-height:42px;font-size:13px}
+@media(max-width:700px){.coupon-history-search label:first-child{width:100%}.coupon-history-search input{width:100%;max-width:none}}
+#coupon-history-section,#coupon-verify-section,[data-coupon-history]{scroll-margin-top:20px}
+[data-coupon-history] .pagination{padding:12px 0;flex-wrap:wrap}
+[data-coupon-history] .pagination button{min-height:40px;min-width:65px;font-size:12px}
+[data-coupon-history] .pagination span{color:#526b80;font-size:12px}
+@media(max-width:700px){.coupon-history-summary{grid-template-columns:1fr}.coupon-summary-card{padding:14px}.coupon-summary-card strong{font-size:24px}.coupon-history-controls{width:100%}}

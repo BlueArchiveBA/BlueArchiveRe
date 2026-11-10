@@ -62,8 +62,14 @@ export function quality(account, students) {
     const s=byId.get(id); return n+Math.max(0,(s?.present??0)-(s?.absent??0));
   },0));
 }
-export function filterAccounts(accounts, {required=[], preferred=[], min=0,max=Infinity, sort='recommended', relaxed=false}, students) {
-  return accounts.filter(a=>a.status!=='sold' && a.price>=min && a.price<=max && (relaxed || required.every(id=>a.studentIds.includes(id))))
+const fesStudentIds = students => new Set(students.filter(student=>student.grade==='FES').map(student=>student.id));
+const countOwnedFes = (studentIds, fesIds) => [...new Set(studentIds)].reduce((count,id)=>count+Number(fesIds.has(id)),0);
+export function countFesStudents(studentIds, students) {
+  return countOwnedFes(studentIds, fesStudentIds(students));
+}
+export function filterAccounts(accounts, {required=[], preferred=[], min=0,max=Infinity, minFes=0, sort='recommended', relaxed=false}, students) {
+  const fesIds = minFes>0 ? fesStudentIds(students) : null;
+  return accounts.filter(a=>a.status!=='sold' && a.price>=min && a.price<=max && (!fesIds || countOwnedFes(a.studentIds,fesIds)>=minFes) && (relaxed || required.every(id=>a.studentIds.includes(id))))
     .map(a=>({...a, missing:required.filter(id=>!a.studentIds.includes(id)), preferredMatches:preferred.filter(id=>a.studentIds.includes(id)).length, quality:quality(a,students)}))
     .sort((a,b)=> a.missing.length-b.missing.length || (sort==='priceAsc' ? a.price-b.price : sort==='priceDesc' ? b.price-a.price : b.preferredMatches-a.preferredMatches || b.quality-a.quality || a.price-b.price) || a.num.localeCompare(b.num));
 }
