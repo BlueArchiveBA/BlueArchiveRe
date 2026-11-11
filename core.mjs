@@ -78,7 +78,7 @@ export const SOURCE_SLOTS=Array.from({length:10},(_,i)=>String(i+1));
 const SOURCE_GROUP=/^([ABCSJ])(10|[1-9])$/i;
 
 export function accountLocation(num) {
-  const match=/^([ABCSJ])(10|[1-9])_(\d{8})$/i.exec(num);
+  const match=/^([ABCSJ])(10|[1-9])_(\d{8}(?:\d{2})?)$/i.exec(num);
   return match?{pc:match[1].toUpperCase(),slot:match[2],suffix:match[3]}:null;
 }
 
@@ -117,8 +117,8 @@ export function parseImport(text, format, group, students, {requireLocation=fals
           errors.push(`${i+1}행: ${rawNum}의 출처 ${rowPrefix}와 선택한 ${prefix}가 다릅니다.`);return;
         }
         num=`${rowPrefix}_${location.suffix}`;
-      } else if (!/^\d{8}$/.test(rawNum)) {
-        errors.push(`${i+1}행: 계정번호는 8자리 숫자 또는 A7_10071752 형식이어야 합니다.`);return;
+      } else if (!/^\d{8}(?:\d{2})?$/.test(rawNum)) {
+        errors.push(`${i+1}행: 계정번호는 8자리 또는 10자리 숫자여야 합니다. 슬롯을 포함한 A7_10071752 형식도 사용할 수 있습니다.`);return;
       } else if (!SOURCE_GROUP.test(prefix)) {
         errors.push(`${i+1}행: ${rawNum}의 PC와 앱플레이어 번호를 선택해 주세요.`);return;
       } else {

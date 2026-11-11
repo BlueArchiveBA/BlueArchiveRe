@@ -9,6 +9,12 @@ const rosterPreviewSize=24;
 const gradeClasses={FES:'grade-fes',한정:'grade-limited',통상:'grade-regular'};
 const accountMoney=price=>`${Math.round(price*10000).toLocaleString('ko-KR')}원`;
 const previousPrice=account=>data.priceComparison?.previousPrices?.[account.num];
+const resourceItems = [
+  {key: 'pyroxene', label: '청휘석', icon: 'pyroxene', unit: ''},
+  {key: 'eligma', label: '엘리그마', icon: 'eligma', unit: ''},
+  {key: 'singleTickets', label: '1뽑 티켓', icon: 'single', unit: '장'},
+  {key: 'tenTickets', label: '10뽑 티켓', icon: 'ten', unit: '장'},
+];
 let toastTimer;
 let consultationPending=false;
 const favorites=createFavorites({getCatalog:()=>data,toast,consultLink});
@@ -136,6 +142,21 @@ function consultLink(account){
   return `<a class="kakao-button" href="${esc(siteConsult.href)}" data-consult="${esc(account.num)}" aria-label="${esc(account.num)} 번호와 가격 복사 후 ${label}">${label} <span aria-hidden="true">↗</span></a>`;
 }
 
+function accountResources(resources) {
+  if (!resources || !resourceItems.some(({key}) => resources[key] != null)) return '';
+  const items = resourceItems.map(({key, label, icon, unit}) => {
+    const amount = resources[key];
+    const display = amount == null ? '—' : /[KM]$/.test(String(amount))
+      ? amount : Number(amount).toLocaleString('ko-KR') + unit;
+    return `<div class="resource-item" title="${label} ${amount == null ? '미확인' : esc(display)}">
+      <dt><img src="assets/resources/${icon}.png" alt="" width="22" height="22"><span>${label}</span></dt>
+      <dd${amount == null ? ' class="resource-unknown"' : ''}>${amount == null
+        ? '<span aria-hidden="true">—</span><span class="sr-only">미확인</span>' : esc(display)}</dd>
+    </div>`;
+  });
+  return `<dl class="account-resources" aria-label="보유 재화">${items.join('')}</dl>`;
+}
+
 function accountCard(account,index){
   const students=orderedStudents(account),fes=countFesStudents(account.studentIds,data.students);
   const badge=account.missing.length?'필수 학생 일부 미포함':applied.required.length?'필수 조건 충족':'';
@@ -147,6 +168,7 @@ function accountCard(account,index){
     </header>
     <div class="account-body">
       <div class="account-meta"><strong>보유 학생 ${account.studentIds.length}명</strong><span>페스 ${fes}명</span>${applied.preferred.length?`<span>선호 ${account.preferredMatches}/${applied.preferred.length}명</span>`:''}${badge?`<span class="match-badge">${badge}</span>`:''}${favorites.cardButton(account)}</div>
+      ${accountResources(account.resources)}
       <div class="account-students">${shown.map(mini).join('')}</div>
       ${remaining.length?`<button type="button" class="roster-toggle" data-open-roster aria-expanded="false" aria-controls="roster-${index}">전체 학생 보기</button>
         <div class="roster-more" id="roster-${index}" tabindex="-1" hidden><div class="account-students">${remaining.map(mini).join('')}</div><button type="button" class="roster-toggle" data-close-roster>학생 접기</button></div>`:''}

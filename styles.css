@@ -173,6 +173,36 @@ html:has(.shop-body) { scroll-padding-top: 65px; }
 .shop-body .account-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin-bottom: 10px; color: var(--shop-muted); font-size: 13px; }
 .shop-body .account-meta strong { color: var(--shop-navy); }
 .shop-body .account-meta .match-badge { padding: 1px 7px; border-radius: 5px; color: var(--shop-blue); background: #e8f4ff; font-size: 12px; font-weight: 700; }
+.shop-body .account-resources {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px;
+  margin: 0 0 10px; padding: 0 0 8px; border-bottom: 1px solid #e4edf4;
+}
+.shop-body .resource-item {
+  display: flex; align-items: center; gap: 5px; padding-right: 14px; border-right: 1px solid #dce7ef;
+}
+.shop-body .resource-item:last-child { border-right: 0; padding-right: 0; }
+.shop-body .resource-item dt {
+  display: flex; align-items: center; gap: 5px; color: #60758a; font-size: 12px; white-space: nowrap;
+}
+.shop-body .resource-item img { width: 22px; height: 22px; object-fit: contain; flex: none; }
+.shop-body .resource-item dd {
+  margin: 0; color: #334f69; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.shop-body .resource-item .resource-unknown { color: #667f94; font-weight: 400; }
+@media (max-width: 760px) {
+  .shop-body .account-resources { column-gap: 9px; padding-bottom: 7px; }
+  .shop-body .resource-item { padding-right: 9px; gap: 4px; }
+  .shop-body .resource-item img { width: 20px; height: 20px; }
+  .shop-body .resource-item dt span {
+    position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%);
+  }
+  .shop-body .resource-item dd { font-size: 12px; }
+}
+@media (max-width: 370px) {
+  .shop-body .account-resources { column-gap: 6px; }
+  .shop-body .resource-item { padding-right: 6px; }
+  .shop-body .resource-item img { width: 18px; height: 18px; }
+}
 .shop-body .account-students { grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 9px 5px; }
 .shop-body .account-students .portrait-wrap { width: min(100%, 52px); }
 .shop-body .account-students .mini-student:nth-child(n+7) { display: block; }
