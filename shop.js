@@ -1,4 +1,4 @@
-import {esc, normalize, filterAccounts, countFesStudents} from './core.mjs?v=9';
+import {esc, normalize, filterAccounts, countFesStudents, accountPriceComparison} from './core.mjs?v=10';
 import {createFavorites} from './favorites.mjs?v=1';
 
 const $=id=>document.getElementById(id);
@@ -160,10 +160,10 @@ function accountCard(account,index){
   const students=orderedStudents(account),fes=countFesStudents(account.studentIds,data.students);
   const badge=account.missing.length?'필수 학생 일부 미포함':applied.required.length?'필수 조건 충족':'';
   const shown=students.slice(0,rosterPreviewSize), remaining=students.slice(rosterPreviewSize);
-  const before=previousPrice(account);
+  const comparison=accountPriceComparison(account.price);
   return `<article class="account-card">
     <header class="account-header"><div><span class="account-number-label">계정번호</span><h3>${esc(account.num)}</h3></div>
-      <p class="account-price">${before>account.price?`<span class="account-price-before"><span class="sr-only">이전 공개가 </span><del>${accountMoney(before)}</del><span aria-hidden="true">→</span></span>`:''}<span><span class="sr-only">현재 판매가 </span>${accountMoney(account.price)}</span></p>
+      <p class="account-price">${comparison?`<span class="account-price-before" title="현재 판매가의 1.2배로 산정한 비교 기준가"><span>비교 기준가</span><del>${accountMoney(comparison.referencePrice)}</del></span>`:''}<span><span class="sr-only">현재 판매가 </span>${accountMoney(account.price)}</span>${comparison?`<span class="account-price-discount" aria-label="비교 기준가 대비 ${comparison.discountPercent}% 낮은 가격">${comparison.discountPercent}%↓</span>`:''}</p>
     </header>
     <div class="account-body">
       <div class="account-meta"><strong>보유 학생 ${account.studentIds.length}명</strong><span>페스 ${fes}명</span>${applied.preferred.length?`<span>선호 ${account.preferredMatches}/${applied.preferred.length}명</span>`:''}${badge?`<span class="match-badge">${badge}</span>`:''}${favorites.cardButton(account)}</div>

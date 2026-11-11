@@ -2,6 +2,15 @@ export const normalize = s => String(s).normalize('NFKC').toLowerCase().replace(
 export const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export const money = n => `${Number(n).toLocaleString('ko-KR', {maximumFractionDigits:1})}만원`;
 export const round1 = n => Math.sign(n) * Math.round((Math.abs(n) + 1e-9) * 10) / 10;
+export function accountPriceComparison(price) {
+  const saleWon = Math.round(Number(price) * 10000);
+  if (!Number.isFinite(saleWon) || saleWon <= 0) return null;
+  const referenceWon = Math.round(saleWon * 1.2);
+  return {
+    referencePrice: referenceWon / 10000,
+    discountPercent: Math.round((referenceWon - saleWon) / referenceWon * 1000) / 10,
+  };
+}
 export function aliasIndex(students) {
   const index = new Map();
   for (const s of students) for (const a of [s.name, s.fullName, ...s.aliases]) {

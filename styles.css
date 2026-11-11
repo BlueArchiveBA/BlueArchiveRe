@@ -167,8 +167,9 @@ html:has(.shop-body) { scroll-padding-top: 65px; }
 .shop-body .account-number-label { display: block; color: #e1eeff; font-size: 12px; line-height: 1.25; }
 .shop-body .account-header h3 { margin: 2px 0 0; color: inherit; font-size: clamp(16px, 3vw, 20px); font-weight: 800; overflow-wrap: anywhere; line-height: 1.2; }
 .shop-body .account-price { margin: 0; color: inherit; font-size: clamp(19px, 3vw, 24px); font-weight: 800; white-space: nowrap; }
-.shop-body .account-price { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: baseline; gap: 0 9px; line-height: 1.25; }
-.shop-body .account-price-before { display: inline-flex; gap: 5px; color: #dceafb; font-size: 13px; font-weight: 600; letter-spacing: 0; }
+.shop-body .account-price { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: baseline; gap: 3px 8px; line-height: 1.25; }
+.shop-body .account-price-before { display: inline-flex; flex-basis: 100%; justify-content: flex-end; gap: 5px; color: #dceafb; font-size: 12px; font-weight: 600; letter-spacing: 0; }
+.shop-body .account-price-discount { padding: 2px 6px; border-radius: 5px; background: #fff1b8; color: #734800; font-size: 12px; font-weight: 800; }
 .shop-body .account-body { padding: 11px 16px 13px; }
 .shop-body .account-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin-bottom: 10px; color: var(--shop-muted); font-size: 13px; }
 .shop-body .account-meta strong { color: var(--shop-navy); }
