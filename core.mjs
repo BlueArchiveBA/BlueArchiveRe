@@ -5,10 +5,11 @@ export const round1 = n => Math.sign(n) * Math.round((Math.abs(n) + 1e-9) * 10) 
 export function accountPriceComparison(price) {
   const saleWon = Math.round(Number(price) * 10000);
   if (!Number.isFinite(saleWon) || saleWon <= 0) return null;
-  const referenceWon = Math.round(saleWon / 0.8);
+  const referenceWon = Math.max(1000, Math.round(saleWon / 0.8 / 1000) * 1000);
   return {
     referencePrice: referenceWon / 10000,
-    discountPercent: Math.round((referenceWon - saleWon) / referenceWon * 1000) / 10,
+    discountPercent: Math.round((referenceWon - saleWon) / referenceWon * 100),
+    approximate: referenceWon * 4 !== saleWon * 5,
   };
 }
 export function aliasIndex(students) {
