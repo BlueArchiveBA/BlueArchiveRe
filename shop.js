@@ -14,7 +14,7 @@ const resourceItems = [
   {key: 'eligma', label: '엘리그마', icon: 'eligma', unit: ''},
   {key: 'singleTickets', label: '1뽑 티켓', icon: 'single', unit: '장'},
   {key: 'tenTickets', label: '10뽑 티켓', icon: 'ten', unit: '장'},
-  {key: 'fesSelectorTickets', label: '페스 선택권', icon: 'fes-selector', unit: '장', defaultAmount: 1},
+  {key: 'fesSelectorTickets', label: '페스 선택권', icon: 'fes-selector-cutout', unit: '장', defaultAmount: 1},
 ];
 let toastTimer;
 let consultationPending=false;
