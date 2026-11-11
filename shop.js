@@ -143,15 +143,14 @@ function consultLink(account){
 }
 
 function accountResources(resources) {
-  if (!resources || !resourceItems.some(({key}) => resources[key] != null)) return '';
   const items = resourceItems.map(({key, label, icon, unit}) => {
-    const amount = resources[key];
-    const display = amount == null ? '—' : /[KM]$/.test(String(amount))
+    const saved = resources?.[key];
+    const amount = saved ?? 0;
+    const display = /[KM]$/.test(String(amount))
       ? amount : Number(amount).toLocaleString('ko-KR') + unit;
-    return `<div class="resource-item" title="${label} ${amount == null ? '미확인' : esc(display)}">
+    return `<div class="resource-item" title="${label} ${esc(display)}">
       <dt><img src="assets/resources/${icon}.png" alt="" width="22" height="22"><span>${label}</span></dt>
-      <dd${amount == null ? ' class="resource-unknown"' : ''}>${amount == null
-        ? '<span aria-hidden="true">—</span><span class="sr-only">미확인</span>' : esc(display)}</dd>
+      <dd${saved == null ? ' class="resource-unknown"' : ''}>${esc(display)}</dd>
     </div>`;
   });
   return `<dl class="account-resources" aria-label="보유 재화">${items.join('')}</dl>`;
