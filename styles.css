@@ -54,6 +54,9 @@ html:has(.shop-body) { scroll-padding-top: 65px; }
 .shop-body .price-notice-close span { font-size: 19px; line-height: 1; }
 .shop-body .price-notice a { background: var(--shop-blue); color: #fff; }
 .shop-body .price-notice :is(button, a):focus-visible { outline: 2px solid var(--shop-blue); outline-offset: 2px; }
+.shop-body #contact-hours-popup { margin-top: 8px; padding: 9px 10px; border-radius: 7px; background: #fff8df; color: #785820; }
+.shop-body #contact-hours-popup strong { font-size: 12px; }
+.shop-body #contact-hours-popup p { margin-top: 4px; font-size: 12px; font-weight: 400; line-height: 1.6; }
 .shop-body .shop-kicker { color: var(--shop-blue); font-size: 13px; font-weight: 800; }
 .shop-body .shop-intro h1 { margin: 2px 0 4px; color: var(--shop-navy); font-size: clamp(28px, 4vw, 42px); line-height: 1.22; }
 .shop-body .shop-intro > p:not(.shop-kicker) { color: var(--shop-muted); }
@@ -158,17 +161,21 @@ html:has(.shop-body) { scroll-padding-top: 65px; }
 .shop-body #result-description { margin: 6px 0 0; color: var(--shop-muted); font-size: 14px; }
 .shop-body .shop-consult-hint { padding: 10px 14px; margin-bottom: 12px; background: #fff9da; border: 1px solid #ecd981; border-radius: 8px; color: #403c25; font-size: 14px; }
 .shop-body .shop-consult-hint p { margin: 2px 0 0; }
+.shop-body .shop-consult-hint .contact-hours-inline { margin-top: 5px; color: #805500; font-size: 11px; line-height: 18px; }
+.shop-body .contact-hours-inline strong { display: inline-block; padding: 0 5px; border-radius: 4px; background: #ffe799; font-size: 10px; }
 .shop-body .account-grid { grid-template-columns: minmax(0, 1fr); gap: 14px; }
 .shop-body .account-card { padding: 0; overflow: hidden; border: 1px solid var(--shop-line); border-radius: 12px; }
 .shop-body .account-header {
-  display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 16px;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 10px; padding: 10px 16px;
   background: linear-gradient(135deg, #1b3a6b, #1769aa); color: #fff;
 }
 .shop-body .account-number-label { display: block; color: #e1eeff; font-size: 12px; line-height: 1.25; }
 .shop-body .account-header h3 { margin: 2px 0 0; color: inherit; font-size: clamp(16px, 3vw, 20px); font-weight: 800; overflow-wrap: anywhere; line-height: 1.2; }
 .shop-body .account-price { margin: 0; color: inherit; font-size: clamp(19px, 3vw, 24px); font-weight: 800; white-space: nowrap; }
-.shop-body .account-price { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: baseline; gap: 3px 8px; line-height: 1.25; }
-.shop-body .account-price-before { display: inline-flex; flex-basis: 100%; justify-content: flex-end; gap: 5px; color: #dceafb; font-size: 12px; font-weight: 600; letter-spacing: 0; }
+.shop-body .account-price { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: baseline; gap: 3px 8px; line-height: 1.25; margin-left: auto; }
+.shop-body .account-price-flow { display: inline-flex; align-items: baseline; gap: 7px; white-space: nowrap; }
+.shop-body .account-price-before { color: #dceafb; font-size: 12px; font-weight: 600; letter-spacing: 0; }
+.shop-body .account-price-arrow { color: #dceafb; font-size: 16px; font-weight: 600; }
 .shop-body .account-price-discount { padding: 2px 6px; border-radius: 5px; background: #fff1b8; color: #734800; font-size: 12px; font-weight: 800; }
 .shop-body .account-body { padding: 11px 16px 13px; }
 .shop-body .account-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin-bottom: 10px; color: var(--shop-muted); font-size: 13px; }
@@ -306,7 +313,7 @@ html:has(.shop-body) { scroll-padding-top: 65px; }
   .shop-body .student-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); max-height: 255px; }
   .shop-body .account-students { grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .shop-body .account-body, .shop-body .account-header { padding-inline: 12px; }
-  .shop-body .account-price { flex-direction: column; align-items: flex-end; }
+  .shop-body .account-price { flex-direction: row; align-items: baseline; }
   .shop-body .account-actions .kakao-button { flex: 1; min-width: 0; }
   .shop-body .help-strip .kakao-button { margin-top: 10px; }
   .shop-body .selection-hero { grid-template-columns: minmax(0, 1fr); }

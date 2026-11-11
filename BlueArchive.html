@@ -6,9 +6,9 @@
   <title>리세팩토리 · 블루아카이브 한국 서버 리세계</title>
   
   <link rel="icon" type="image/png" sizes="48x48" href="/static/images/favicon.png">
-  <link rel="stylesheet" href="styles.css?v=shop21">
+  <link rel="stylesheet" href="styles.css?v=shop23">
   <link rel="stylesheet" href="favorites.css?v=1">
-  <script type="module" src="shop.js?v=27"></script>
+  <script type="module" src="shop.js?v=29"></script>
   <meta name="robots" content="noindex">
 </head>
 <body class="shop-body idfarm-body">
@@ -81,7 +81,7 @@
     <section class="results-section" id="results" aria-labelledby="results-title">
       <div class="section-heading result-heading"><div><span class="shop-kicker">2 · 계정 확인</span><h2 id="results-title">검색 결과 <span id="result-count">—</span></h2><p id="result-description">목록을 불러오는 중입니다.</p></div><label class="sort-label">정렬<select id="sort-order"><option value="recommended" selected>운영자 기준 추천순</option><option value="priceAsc">낮은 가격순</option><option value="priceDesc">높은 가격순</option></select></label></div>
       
-      <div class="shop-consult-hint"><p>아이디팜 판매글의 1:1 상담에서 계정번호와 가격을 알려주세요.</p></div>
+      <div class="shop-consult-hint"><p>아이디팜 판매글의 1:1 상담에서 계정번호와 가격을 알려주세요.</p><p class="contact-hours-inline"><strong>답변 지연 시간</strong> 22:00~05:00 · 문의는 남겨주세요.</p></div>
       <div class="grade-key result-grade-key" aria-label="학생 테두리 색상과 검색 조건 표시"><span class="grade-fes">페스</span><span class="grade-limited">한정</span><span class="grade-regular">통상</span><span class="key-required">✓ 필수</span><span class="key-preferred">♥ 선호</span></div>
       <nav id="pagination-top" class="pagination-top" aria-label="검색결과 상단 페이지 이동" hidden></nav>
       <div id="account-grid" class="account-grid" aria-live="polite"></div><nav id="pagination" class="pagination" aria-label="검색결과 하단 페이지 이동"></nav>
@@ -101,6 +101,10 @@
     </div>
     <p id="price-notice-summary"></p>
     <p id="price-notice-basis">11월 9일 적용</p>
+    <section id="contact-hours-popup" hidden>
+      <strong>답변 지연 시간 22:00~다음 날 05:00</strong>
+      <p>지금은 답변이 늦어질 수 있어요.<br>문의를 남겨주시면 확인 후 순서대로 답변드릴게요.</p>
+    </section>
     <div class="price-notice-actions">
       <button type="button" id="price-notice-today">오늘 그만 보기</button>
       <a href="#results" id="price-notice-link">계정 목록 보기 <span aria-hidden="true">↓</span></a>

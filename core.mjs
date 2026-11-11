@@ -2,6 +2,14 @@ export const normalize = s => String(s).normalize('NFKC').toLowerCase().replace(
 export const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export const money = n => `${Number(n).toLocaleString('ko-KR', {maximumFractionDigits:1})}만원`;
 export const round1 = n => Math.sign(n) * Math.round((Math.abs(n) + 1e-9) * 10) / 10;
+export function contactHoursState(now = new Date()) {
+  const parts = Object.fromEntries(new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', hourCycle: 'h23',
+  }).formatToParts(now).map(part => [part.type, part.value]));
+  const hour = Number(parts.hour);
+  return { date: `${parts.year}-${parts.month}-${parts.day}`, delayed: hour >= 22 || hour < 5 };
+}
 export function accountPriceComparison(price) {
   const saleWon = Math.round(Number(price) * 10000);
   if (!Number.isFinite(saleWon) || saleWon <= 0) return null;

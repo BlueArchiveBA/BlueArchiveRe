@@ -1,4 +1,4 @@
-import {esc, normalize, filterAccounts, countFesStudents, accountPriceComparison} from './core.mjs?v=12';
+import {esc, normalize, filterAccounts, countFesStudents, accountPriceComparison, contactHoursState} from './core.mjs?v=13';
 import {createFavorites} from './favorites.mjs?v=1';
 
 const $=id=>document.getElementById(id);
@@ -164,7 +164,7 @@ function accountCard(account,index){
   const comparison=accountPriceComparison(account.price);
   return `<article class="account-card">
     <header class="account-header"><div><span class="account-number-label">계정번호</span><h3>${esc(account.num)}</h3></div>
-      <p class="account-price">${comparison?`<span class="account-price-before" title="현재 판매가를 0.8로 나눈 뒤 천 원 단위로 반올림한 비교 기준가"><span>비교 기준가</span><del>${accountMoney(comparison.referencePrice)}</del></span>`:''}<span><span class="sr-only">현재 판매가 </span>${accountMoney(account.price)}</span>${comparison?`<span class="account-price-discount" aria-label="비교 기준가 대비 ${comparison.approximate?'약 ':''}${comparison.discountPercent}% 낮은 가격">${comparison.approximate?'약 ':''}${comparison.discountPercent}%↓</span>`:''}</p>
+      <p class="account-price"><span class="account-price-flow">${comparison?`<span class="account-price-before" title="현재 판매가를 0.8로 나눈 뒤 천 원 단위로 반올림한 금액"><del>${accountMoney(comparison.referencePrice)}</del></span><span class="account-price-arrow" aria-hidden="true">→</span>`:''}<span><span class="sr-only">현재 판매가 </span>${accountMoney(account.price)}</span></span>${comparison?`<span class="account-price-discount" aria-label="20% 할인 기준">20%↓</span>`:''}</p>
     </header>
     <div class="account-body">
       <div class="account-meta"><strong>보유 학생 ${account.studentIds.length}명</strong><span>페스 ${fes}명</span>${applied.preferred.length?`<span>선호 ${account.preferredMatches}/${applied.preferred.length}명</span>`:''}${badge?`<span class="match-badge">${badge}</span>`:''}${favorites.cardButton(account)}</div>
@@ -279,20 +279,36 @@ $('reset-filters').addEventListener('click',()=>{selected={required:[],preferred
 document.addEventListener('keydown',e=>{if(e.key==='/'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();$('student-search').focus();}});
 function showPriceNotice(){
   const comparison=data.priceComparison;
-  if(!comparison||!Object.keys(comparison.previousPrices).length)return;
-  const key=`resetfactory.priceNotice.${comparison.sourceDate}`;
-  const today=new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Seoul'}).format(new Date());
-  try{if(localStorage.getItem(key)===today)return;}catch{}
+  const hours=contactHoursState();
+  const today=hours.date;
+  const key=`resetfactory.priceNotice.${comparison?.sourceDate??''}`;
+  const hoursKey='resetfactory.contactHoursNotice';
+  let showPrice=Boolean(comparison&&Object.keys(comparison.previousPrices??{}).length);
+  let showHours=hours.delayed;
+  try{
+    showPrice&&=localStorage.getItem(key)!==today;
+    showHours&&=localStorage.getItem(hoursKey)!==today;
+  }catch{}
+  if(!showPrice&&!showHours)return;
   const notice=$('price-notice');
-  const hasTwentyPercentReduction=data.accounts.some(account=>Math.round(account.price*10000)*5<=Math.round(previousPrice(account)*10000)*4);
-  $('price-notice-summary').textContent=hasTwentyPercentReduction
-    ?'20% 이상 가격 인하 적용'
-    :'계정 카드에서 갱신된 판매가를 확인하세요.';
+  $('price-notice-title').textContent=showPrice?'계정 가격 인하!':'상담 답변 안내';
+  $('price-notice-summary').hidden=!showPrice;
+  $('price-notice-basis').hidden=!showPrice;
+  $('contact-hours-popup').hidden=!showHours;
+  if(showPrice){
+    const hasTwentyPercentReduction=data.accounts.some(account=>Math.round(account.price*10000)*5<=Math.round(previousPrice(account)*10000)*4);
+    $('price-notice-summary').textContent=hasTwentyPercentReduction
+      ?'20% 이상 가격 인하 적용'
+      :'계정 카드에서 갱신된 판매가를 확인하세요.';
+  }
   const dismiss=()=>{notice.hidden=true;};
   $('price-notice-close').addEventListener('click',dismiss);
   $('price-notice-link').addEventListener('click',dismiss);
   $('price-notice-today').addEventListener('click',()=>{
-    try{localStorage.setItem(key,today);}catch{}
+    try{
+      if(showPrice)localStorage.setItem(key,today);
+      if(showHours)localStorage.setItem(hoursKey,today);
+    }catch{}
     dismiss();
   });
   notice.hidden=false;
