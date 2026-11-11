@@ -197,6 +197,7 @@ html:has(.shop-body) { scroll-padding-top: 65px; }
   .shop-body .resource-item dt span {
     position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%);
   }
+  .shop-body .resource-fes-selector dt span { position: static; width: auto; height: auto; overflow: visible; clip-path: none; font-size: 11px; }
   .shop-body .resource-item dd { font-size: 12px; }
 }
 @media (max-width: 370px) {

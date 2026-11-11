@@ -14,6 +14,7 @@ const resourceItems = [
   {key: 'eligma', label: '엘리그마', icon: 'eligma', unit: ''},
   {key: 'singleTickets', label: '1뽑 티켓', icon: 'single', unit: '장'},
   {key: 'tenTickets', label: '10뽑 티켓', icon: 'ten', unit: '장'},
+  {key: 'fesSelectorTickets', label: '페스 선택권', icon: 'fes-selector', unit: '장', defaultAmount: 1},
 ];
 let toastTimer;
 let consultationPending=false;
@@ -143,14 +144,14 @@ function consultLink(account){
 }
 
 function accountResources(resources) {
-  const items = resourceItems.map(({key, label, icon, unit}) => {
+  const items = resourceItems.map(({key, label, icon, unit, defaultAmount}) => {
     const saved = resources?.[key];
-    const amount = saved ?? 0;
+    const amount = saved ?? defaultAmount ?? 0;
     const display = /[KM]$/.test(String(amount))
       ? amount : Number(amount).toLocaleString('ko-KR') + unit;
-    return `<div class="resource-item" title="${label} ${esc(display)}">
+    return `<div class="resource-item${key === 'fesSelectorTickets' ? ' resource-fes-selector' : ''}" title="${label} ${esc(display)}">
       <dt><img src="assets/resources/${icon}.png" alt="" width="22" height="22"><span>${label}</span></dt>
-      <dd${saved == null ? ' class="resource-unknown"' : ''}>${esc(display)}</dd>
+      <dd${saved == null && defaultAmount == null ? ' class="resource-unknown"' : ''}>${esc(display)}</dd>
     </div>`;
   });
   return `<dl class="account-resources" aria-label="보유 재화">${items.join('')}</dl>`;
