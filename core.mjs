@@ -5,7 +5,7 @@ export const round1 = n => Math.sign(n) * Math.round((Math.abs(n) + 1e-9) * 10) 
 export function accountPriceComparison(price) {
   const saleWon = Math.round(Number(price) * 10000);
   if (!Number.isFinite(saleWon) || saleWon <= 0) return null;
-  const referenceWon = Math.round(saleWon * 1.2);
+  const referenceWon = Math.round(saleWon / 0.8);
   return {
     referencePrice: referenceWon / 10000,
     discountPercent: Math.round((referenceWon - saleWon) / referenceWon * 1000) / 10,
