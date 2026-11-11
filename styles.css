@@ -178,9 +178,9 @@ html:has(.shop-body) { scroll-padding-top: 65px; }
   margin: 0 0 10px; padding: 0 0 8px; border-bottom: 1px solid #e4edf4;
 }
 .shop-body .resource-item {
-  display: flex; align-items: center; gap: 5px; padding-right: 14px; border-right: 1px solid #dce7ef;
+  display: flex; align-items: center; gap: 5px; padding-right: 14px;
 }
-.shop-body .resource-item:last-child { border-right: 0; padding-right: 0; }
+.shop-body .resource-item:last-child { padding-right: 0; }
 .shop-body .resource-item dt {
   display: flex; align-items: center; gap: 5px; color: #60758a; font-size: 12px; white-space: nowrap;
 }
