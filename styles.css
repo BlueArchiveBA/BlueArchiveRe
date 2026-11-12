@@ -102,19 +102,41 @@ html:has(.shop-body) { scroll-padding-top: 65px; }
 .shop-body .student-card .portrait-wrap, .shop-body .mini-student .portrait-wrap { width: min(100%, 66px); margin-inline: auto; border-radius: 50%; }
 .shop-body .portrait-wrap img, .shop-body .portrait-wrap .avatar-fallback { border-radius: 50%; object-fit: cover; }
 .shop-body .portrait-wrap img { display: block; }
-.shop-body .grade-fes { --grade-color: #e100d1; }
-.shop-body .grade-limited { --grade-color: #e52939; }
-.shop-body .grade-regular { --grade-color: #e78c05; }
-.shop-body .portrait-wrap[class*="grade-"] { border: 3px solid var(--grade-color); padding: 1px; }
+.shop-body .grade-fes, .shop-body .favorites-portrait.fes {
+  --grade-color: #e100d1; --grade-deep: #a817a3; --grade-pale: #ffc8f6;
+  --grade-shadow: rgba(168, 23, 163, .17); --grade-highlight: rgba(255, 200, 246, .48);
+}
+.shop-body .grade-limited, .shop-body .favorites-portrait.limited {
+  --grade-color: #e52939; --grade-deep: #b72837; --grade-pale: #ffcfd8;
+  --grade-shadow: rgba(183, 40, 55, .17); --grade-highlight: rgba(255, 207, 216, .48);
+}
+.shop-body .grade-regular, .shop-body .favorites-portrait.regular {
+  --grade-color: #e78c05; --grade-deep: #b86a05; --grade-pale: #ffe9ae;
+  --grade-shadow: rgba(184, 106, 5, .17); --grade-highlight: rgba(255, 233, 174, .48);
+}
+.shop-body .portrait-wrap[class*="grade-"],
+.shop-body .favorites-dialog .favorites-portrait,
+.shop-body .grade-key > [class*="grade-"]::before {
+  border: 3px solid transparent; padding: 1px;
+  background: linear-gradient(#fff, #fff) padding-box,
+    linear-gradient(140deg, var(--grade-deep) 0%, var(--grade-pale) 17%, var(--grade-color) 37%,
+      var(--grade-color) 62%, var(--grade-pale) 83%, var(--grade-deep) 100%) border-box;
+  box-shadow: 0 1px 3px var(--grade-shadow), inset 0 0 0 1px var(--grade-highlight);
+}
 .shop-body .selection-check { display: grid; place-items: center; top: -4px; right: -4px; border: 1px solid #fff; background: #1769aa; font-size: 12px; }
 .shop-body .selection-check.preferred-check { background: #7142a0; }
 .shop-body .grade-key { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 2px 0 8px; color: var(--shop-muted); font-size: 12px; font-weight: 700; }
 .shop-body .grade-key > span { display: inline-flex; align-items: center; gap: 4px; }
-.shop-body .grade-key > [class*="grade-"]::before { content: ""; width: 12px; height: 12px; border: 3px solid var(--grade-color); border-radius: 50%; background: #fff; }
+.shop-body .grade-key > [class*="grade-"]::before { content: ""; width: 12px; height: 12px; padding: 0; border-radius: 50%; }
 .shop-body .grade-key .key-required { color: #1769aa; }
 .shop-body .grade-key .key-preferred { color: #7142a0; }
 .shop-body .result-grade-key { margin: 0 0 10px; }
 .shop-body .student-name { font-size: 12px; color: #344c65; }
+.shop-body .student-grade { display: block; margin-top: 2px; color: #687f94; font-size: 11px; font-weight: 500; line-height: 1.25; }
+.shop-body .student-card .student-grade { margin-top: 0; }
+.shop-body .mini-student .student-grade { margin-top: 1px; }
+.shop-body .chip-student-text { display: grid; gap: 1px; text-align: left; line-height: 1.2; }
+.shop-body .chip-student-text .student-grade { margin-top: 0; }
 .shop-body .condition-title h3 { font-size: 16px; color: var(--shop-navy); }
 .shop-body .field-label, .shop-body .empty-selection,
 .shop-body .budget-presets button, .shop-body .selected-chips button, .shop-body .sort-label {
@@ -196,7 +218,6 @@ html:has(.shop-body) { scroll-padding-top: 65px; }
 .shop-body .resource-item dd {
   margin: 0; color: #334f69; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap;
 }
-.shop-body .resource-item .resource-unknown { color: #667f94; font-weight: 400; }
 @media (max-width: 760px) {
   .shop-body .account-resources { column-gap: 9px; padding-bottom: 7px; }
   .shop-body .resource-item { padding-right: 9px; gap: 4px; }

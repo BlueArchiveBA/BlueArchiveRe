@@ -1,5 +1,5 @@
 import {esc, normalize, filterAccounts, countFesStudents, accountPriceComparison, contactHoursState} from './core.mjs?v=13';
-import {createFavorites} from './favorites.mjs?v=1';
+import {createFavorites} from './favorites.mjs?v=2';
 
 const $=id=>document.getElementById(id);
 const siteConsult=$('site-consult');
@@ -34,6 +34,7 @@ function toast(message,duration=2500){
 }
 function portrait(s){return s.image?`<img src="${esc(s.image)}" alt="" loading="lazy" width="80" height="80">`:`<span class="avatar-fallback">${esc(s.name.slice(0,1))}</span>`;}
 function displayGrade(student){return student.grade==='FES'||student.grade==='한정'?student.grade:'통상';}
+function gradeLabel(student){const value=displayGrade(student);return `<span class="student-grade">${value==='FES'?'페스':value}</span>`;}
 function studentWeight(student){return Math.max(0,student.present-student.absent);}
 function portraitWithGrade(student,match){
   const marker=match?`<span class="selection-check ${match==='선호'?'preferred-check':''}" aria-hidden="true">${match==='선호'?'♥':'✓'}</span>`:'';
@@ -42,7 +43,7 @@ function portraitWithGrade(student,match){
 function studentCard(student){
   const match=selected.required.includes(student.id)?'필수':selected.preferred.includes(student.id)?'선호':'';
   const label=`${student.fullName} · ${displayGrade(student)==='FES'?'페스':displayGrade(student)}`;
-  return `<button type="button" class="student-card" data-student="${esc(student.id)}" title="${esc(label)}" aria-label="${esc(label)}${match?` · ${match} 선택됨`:''}" aria-pressed="${Boolean(match)}">${portraitWithGrade(student,match)}<span class="student-name">${esc(student.name)}</span></button>`;
+  return `<button type="button" class="student-card" data-student="${esc(student.id)}" title="${esc(label)}" aria-label="${esc(label)}${match?` · ${match} 선택됨`:''}" aria-pressed="${Boolean(match)}">${portraitWithGrade(student,match)}<span class="student-name">${esc(student.name)}</span>${gradeLabel(student)}</button>`;
 }
 function renderStudents(){
   if(!data) return;
@@ -63,7 +64,7 @@ function renderSelected(){
       const grade=displayGrade(student);
       const label=esc(`${student.fullName} · ${grade==='FES'?'페스':grade}`);
       return `<button type="button" class="chip ${type==='preferred'?'optional':''}" data-remove="${esc(id)}" title="${label}" aria-label="${label} 선택 해제">
-        ${portraitWithGrade(student)}<span>${esc(student.name)}</span><span class="chip-remove" aria-hidden="true">×</span>
+        ${portraitWithGrade(student)}<span class="chip-student-text"><span>${esc(student.name)}</span>${gradeLabel(student)}</span><span class="chip-remove" aria-hidden="true">×</span>
       </button>`;
     }).join('')||'<span class="empty-selection">선택한 학생 없음</span>';
   }
@@ -130,7 +131,7 @@ function search({scroll=false,relax=false,record=false}={}){
 function mini(student){
   const match=applied.required.includes(student.id)?'필수':applied.preferred.includes(student.id)?'선호':'';
   const label=`${student.fullName} · ${displayGrade(student)==='FES'?'페스':displayGrade(student)}${match?` · ${match} 조건`:''}`;
-  return `<div class="mini-student" title="${esc(label)}">${portraitWithGrade(student,match)}<span class="student-name" aria-label="${esc(label)}">${esc(student.name)}</span></div>`;
+  return `<div class="mini-student" title="${esc(label)}">${portraitWithGrade(student,match)}<span class="student-name" aria-label="${esc(label)}">${esc(student.name)}</span>${gradeLabel(student)}</div>`;
 }
 function orderedStudents(account){
   const priority=student=>applied.required.includes(student.id)?0:applied.preferred.includes(student.id)?1:student.grade==='FES'?2:3;
@@ -151,7 +152,7 @@ function accountResources(resources) {
       ? amount : Number(amount).toLocaleString('ko-KR') + unit;
     return `<div class="resource-item${key === 'fesSelectorTickets' ? ' resource-fes-selector' : ''}" title="${label} ${esc(display)}">
       <dt><img src="assets/resources/${icon}.png" alt="" width="22" height="22"><span>${label}</span></dt>
-      <dd${saved == null && defaultAmount == null ? ' class="resource-unknown"' : ''}>${esc(display)}</dd>
+      <dd>${esc(display)}</dd>
     </div>`;
   });
   return `<dl class="account-resources" aria-label="보유 재화">${items.join('')}</dl>`;

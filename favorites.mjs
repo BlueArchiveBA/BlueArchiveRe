@@ -101,7 +101,7 @@ export function createFavorites({ getCatalog, toast, consultLink = () => '' }) {
     const title = `${student.fullName || student.name} · ${grade === 'fes' ? '페스' : grade === 'limited' ? '한정' : '통상'}`;
     return `<li class="favorites-student" title="${esc(title)}"><span class="favorites-portrait ${grade}">${student.image
       ? `<img src="${esc(student.image)}" alt="" loading="lazy" width="52" height="52">`
-      : `<span class="favorites-fallback">${esc(student.name.slice(0, 1))}</span>`}</span><span class="favorites-student-name">${esc(student.name)}</span></li>`;
+      : `<span class="favorites-fallback">${esc(student.name.slice(0, 1))}</span>`}</span><span class="favorites-student-name">${esc(student.name)}</span><span class="favorites-student-grade">${grade === 'fes' ? '페스' : grade === 'limited' ? '한정' : '통상'}</span></li>`;
   }
 
   function actions(account) {
