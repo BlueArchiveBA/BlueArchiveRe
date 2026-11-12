@@ -91,6 +91,12 @@ export function filterAccounts(accounts, {required=[], preferred=[], min=0,max=I
     .map(a=>({...a, missing:required.filter(id=>!a.studentIds.includes(id)), preferredMatches:preferred.filter(id=>a.studentIds.includes(id)).length, quality:quality(a,students)}))
     .sort((a,b)=> a.missing.length-b.missing.length || (sort==='priceAsc' ? a.price-b.price : sort==='priceDesc' ? b.price-a.price : b.preferredMatches-a.preferredMatches || b.quality-a.quality || a.price-b.price) || a.num.localeCompare(b.num));
 }
+export function publicInventoryAccounts(accounts, listingPrices, minPrice=5) {
+  return accounts.filter(account=>account.status==='available')
+    .map(account=>({...account,price:listingPrices?.[account.num]}))
+    .filter(account=>Number.isFinite(account.price)&&account.price>=minPrice);
+}
+
 export const SOURCE_PCS=['A','B','C','S','J'];
 export const SOURCE_SLOTS=Array.from({length:10},(_,i)=>String(i+1));
 const SOURCE_GROUP=/^([ABCSJ])(10|[1-9])$/i;
