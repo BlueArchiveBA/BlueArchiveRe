@@ -48,7 +48,7 @@ function increment(map, key, count) {
   map.set(key, (map.get(key) ?? 0) + count);
 }
 
-const top = map => [...map].sort(([a, aCount], [b, bCount]) => bCount - aCount || a.localeCompare(b)).slice(0, 15);
+const top = (map, limit=15) => [...map].sort(([a, aCount], [b, bCount]) => bCount - aCount || a.localeCompare(b)).slice(0, limit);
 
 function summaryFilter(params, today) {
   const channel = params.get('channel') ?? 'all';
@@ -84,6 +84,9 @@ async function readSummary(store, today, filter) {
   const { channel, prefix = '', from } = filter;
   const keys = await summaryKeys(store, today, filter);
   const required = new Map(), preferred = new Map(), budgets = new Map(), conditions = new Map(), fesCounts = new Map();
+  const detailed = filter.detail === 'full';
+  const daily = new Map();
+  const ranking = map => top(map, detailed ? Infinity : 15);
   let total = 0;
   let firstRecorded = null, lastRecorded = null;
   // Old ring slots and new date keys each hold distinct writes, including on rollout day.
@@ -101,6 +104,7 @@ async function readSummary(store, today, filter) {
         const [source, must, wish, min, max, minFes = 0] = JSON.parse(key);
         if (channel !== 'all' && channel !== source) continue;
         total += count;
+        if (detailed) increment(daily, JSON.stringify([date, source, must, wish, min, max, minFes]), count);
         for (const student of must) increment(required, student, count);
         for (const student of wish) increment(preferred, student, count);
         increment(budgets, JSON.stringify([min, max]), count);
@@ -113,10 +117,14 @@ async function readSummary(store, today, filter) {
       }
     }
   }
-  return { ...(filter.period ? { firstRecorded, lastRecorded } : {}), total, required: top(required), preferred: top(preferred),
-    budgets: top(budgets).map(([key, count]) => [...JSON.parse(key), count]),
-    fesCounts: top(fesCounts).map(([minimum, count]) => [Number(minimum), count]),
-    conditions: top(conditions).map(([key, count]) => {
+  return { ...(filter.period ? { firstRecorded, lastRecorded } : {}), total, required: ranking(required), preferred: ranking(preferred),
+    ...(detailed ? {detail:'full', exportVersion:1, records:[...daily].sort(([a],[b])=>a.localeCompare(b)).map(([key,count])=>{
+      const [date, channel, required, preferred, minBand, maxBand, minFes] = JSON.parse(key);
+      return {date, channel, required, preferred, minBand, maxBand, minFes, count};
+    })} : {}),
+    budgets: ranking(budgets).map(([key, count]) => [...JSON.parse(key), count]),
+    fesCounts: ranking(fesCounts).map(([minimum, count]) => [Number(minimum), count]),
+    conditions: ranking(conditions).map(([key, count]) => {
       const [must, wish, min, max, minFes] = JSON.parse(key);
       return [must, wish, min, max, count, minFes];
     }) };
@@ -154,6 +162,9 @@ export async function handleSearchStats(request, token, openStore, now = new Dat
     }
     const filter = summaryFilter(url.searchParams, today);
     if (!filter) return json({ error: 'invalid_filter' }, 400);
+    const detail = url.searchParams.get('detail');
+    if (detail !== null && detail !== 'full') return json({error:'invalid_detail'},400);
+    if (detail === 'full') filter.detail = detail;
     const range = filter.days ? { days: filter.days } : { period: filter.period };
     return json({ today, ...range, channel: filter.channel, ...await readSummary(openStore(), today, filter) });
   }
