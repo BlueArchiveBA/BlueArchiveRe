@@ -1,0 +1,21 @@
+.account-meta{flex-wrap:wrap;gap:8px}
+.account-share-actions{display:inline-flex;gap:6px;align-items:center;margin-left:auto;flex-wrap:wrap}
+.account-share-actions button{display:inline-flex;align-items:center;gap:5px;min-height:34px;padding:6px 9px;border:1px solid #b8d4e9;border-radius:7px;background:#f0f7fd;color:#176caa;font-size:12px;font-weight:700;white-space:nowrap}
+.account-share-actions button:hover{background:#e3f1fc;border-color:#78afd6}
+.account-share-actions button:disabled{opacity:.65;cursor:wait}
+.shared-account-notice{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 18px;padding:13px 16px;border:1px solid #bbd9ef;border-radius:9px;background:#f0f7fd;color:#214b70}
+.shared-account-notice[hidden]{display:none}
+.shared-account-notice strong{font-size:15px}.shared-account-notice small{display:block;margin-top:4px;color:#5f7990}
+.shared-account-notice button{padding:9px 12px;border:1px solid #b3cfe4;border-radius:7px;background:#fff;color:#176caa;font-size:13px;font-weight:700;min-height:38px}
+.account-image-preview{display:block;width:100%;height:auto;margin:12px 0}
+.admin-body .inventory-resources-row td{padding:0 18px 15px;background:#f5faff}
+.inventory-resources{display:flex;gap:12px 25px;flex-wrap:wrap;margin:0;padding:12px 0 0}
+.inventory-resources>div{display:flex;align-items:center;gap:9px}.inventory-resources dt{display:flex;align-items:center;gap:5px;color:#5c768c;font-size:12px}.inventory-resources dd{font-size:14px;font-weight:800;color:#214d73;margin:0}.inventory-resources img{object-fit:contain}
+.inventory-resources-empty{font-size:12px;color:#6a7f90;padding-top:10px}
+@media(max-width:700px){.account-share-actions button{min-height:40px}.admin-body .inventory-resources-row,.admin-body .inventory-resources-row td{display:block}.admin-body .inventory-resources-row td{padding:0 16px 16px}.inventory-resources{gap:10px 18px}}
+
+.publish-review-counts{display:flex;flex-wrap:wrap;gap:9px;margin:16px 0}.publish-review-counts span{background:#edf6fe;border:1px solid #d2e4f2;border-radius:7px;padding:9px 11px;font-size:13px;color:#2c5475}.publish-review-counts b{margin-left:8px}.publish-review-large td{background:#fff6e7;color:#795013}#admin-dialog details{margin:12px 0}#admin-dialog details summary{cursor:pointer}
+
+.account-share-actions svg{width:15px;height:15px;flex:none}
+
+.account-secondary-actions{margin-left:auto;display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}.shop-body .account-secondary-actions .favorite-toggle{margin-left:0}.account-secondary-actions .account-share-actions{margin-left:0}

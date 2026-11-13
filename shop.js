@@ -1,3 +1,4 @@
+import {RESOURCE_ITEMS,accountToolButtons,accountShareUrl,sharedAccountId,sharedAccountSelection,createAccountImage} from './account-tools.mjs?v=1';
 import {esc, normalize, filterAccounts, countFesStudents, accountPriceComparison, contactHoursState} from './core.mjs?v=13';
 import {createFavorites} from './favorites.mjs?v=2';
 
@@ -9,13 +10,8 @@ const rosterPreviewSize=24;
 const gradeClasses={FES:'grade-fes',한정:'grade-limited',통상:'grade-regular'};
 const accountMoney=price=>`${Math.round(price*10000).toLocaleString('ko-KR')}원`;
 const previousPrice=account=>data.priceComparison?.previousPrices?.[account.num];
-const resourceItems = [
-  {key: 'pyroxene', label: '청휘석', icon: 'pyroxene', unit: ''},
-  {key: 'eligma', label: '엘리그마', icon: 'eligma', unit: ''},
-  {key: 'singleTickets', label: '1뽑 티켓', icon: 'single', unit: '장'},
-  {key: 'tenTickets', label: '10뽑 티켓', icon: 'ten', unit: '장'},
-  {key: 'fesSelectorTickets', label: '페스 선택권', icon: 'fes-selector-cutout', unit: '장', defaultAmount: 1},
-];
+const resourceItems=RESOURCE_ITEMS;
+let sharedNumber=null;
 let toastTimer;
 let consultationPending=false;
 const favorites=createFavorites({getCatalog:()=>data,toast,consultLink});
@@ -98,13 +94,14 @@ function renderFesOptions(){
   $('min-fes').value='0';
 }
 function getFilters(){const min=Number($('min-price').value),max=$('max-price').value===''?Infinity:Number($('max-price').value),minFes=Number($('min-fes').value);if(!Number.isFinite(min)||min<0||max<0||min>max)throw new Error('최소·최대 가격 범위를 확인해 주세요.');return {required:[...selected.required],preferred:[...selected.preferred],min,max,minFes,sort:$('sort-order').value};}
-function search({scroll=false,relax=false,record=false}={}){
+function search({scroll=false,relax=false,record=false,keepShared=false}={}){
   if(!data)return;
   try{
     const filters=getFilters();
+    if(!keepShared)clearSharedAccount();
     applied=filters;
     relaxed=relax;
-    current=filterAccounts(data.accounts,{...filters,relaxed},data.students);
+    current=sharedNumber!==null?filterAccounts(sharedAccountSelection(data.accounts,sharedNumber),{...filters,required:[],preferred:[],min:0,max:Infinity,minFes:0,relaxed:false},data.students):filterAccounts(data.accounts,{...filters,relaxed},data.students);
     page=1;
     renderAccounts();
     $('filter-status').textContent='';
@@ -139,7 +136,7 @@ function orderedStudents(account){
     .sort((a,b)=>priority(a)-priority(b)||studentWeight(b)-studentWeight(a)||a.order-b.order);
 }
 function consultLink(account){
-  if(!siteConsult) return '';
+  if(!siteConsult) return document.body.classList.contains('idfarm-body')?`<a class="primary" href="#consultation" data-consult="${esc(account.num)}">1:1 상담 →</a>`:'';
   const label=esc(siteConsult.dataset.accountLabel);
   return `<a class="kakao-button" href="${esc(siteConsult.href)}" data-consult="${esc(account.num)}" aria-label="${esc(account.num)} 번호와 가격 복사 후 ${label}">${label} <span aria-hidden="true">↗</span></a>`;
 }
@@ -168,7 +165,7 @@ function accountCard(account,index){
       <p class="account-price"><span class="account-price-flow">${comparison?`<span class="account-price-before" title="현재 판매가를 0.8로 나눈 뒤 천 원 단위로 반올림한 금액"><del>${accountMoney(comparison.referencePrice)}</del></span><span class="account-price-arrow" aria-hidden="true">→</span>`:''}<span><span class="sr-only">현재 판매가 </span>${accountMoney(account.price)}</span></span>${comparison?`<span class="account-price-discount" aria-label="20% 할인 기준">20%↓</span>`:''}</p>
     </header>
     <div class="account-body">
-      <div class="account-meta"><strong>보유 학생 ${account.studentIds.length}명</strong><span>페스 ${fes}명</span>${applied.preferred.length?`<span>선호 ${account.preferredMatches}/${applied.preferred.length}명</span>`:''}${badge?`<span class="match-badge">${badge}</span>`:''}${favorites.cardButton(account)}</div>
+      <div class="account-meta"><strong>보유 학생 ${account.studentIds.length}명</strong><span>페스 ${fes}명</span>${applied.preferred.length?`<span>선호 ${account.preferredMatches}/${applied.preferred.length}명</span>`:''}${badge?`<span class="match-badge">${badge}</span>`:''}<span class="account-secondary-actions">${favorites.cardButton(account)}${accountToolButtons(account.num)}</span></div>
       ${accountResources(account.resources)}
       <div class="account-students">${shown.map(mini).join('')}</div>
       ${remaining.length?`<button type="button" class="roster-toggle" data-open-roster aria-expanded="false" aria-controls="roster-${index}">전체 학생 보기</button>
@@ -187,9 +184,14 @@ function accountCard(account,index){
   </article>`;
 }
 
-function renderAccounts(){const count=current.length;$('result-count').textContent=`${count.toLocaleString()}개`;$('result-description').textContent=relaxed
+function renderAccounts(){const count=current.length;
+  $('shared-account-notice').hidden=sharedNumber===null;
+  $('shared-account-number').textContent=sharedNumber||'계정번호 확인 필요';
+  $('sort-order').disabled=sharedNumber!==null;
+  if(sharedNumber!==null&&!count){$('result-count').textContent='0개';$('result-description').textContent='공유받은 계정을 확인했습니다.';$('account-grid').innerHTML='<div class="empty-state"><h3>현재 조회할 수 없는 계정입니다.</h3><p>판매완료 또는 게시 상태가 변경되었을 수 있습니다. 전체 계정 보기에서 다른 계정을 찾아보세요.</p></div>';$('pagination').innerHTML='';$('pagination-top').hidden=true;return;}
+$('result-count').textContent=`${count.toLocaleString()}개`;$('result-description').textContent=relaxed
     ?`필수 학생 조건을 완화한 목록입니다. 각 계정에서 빠진 학생을 확인하세요.${applied.minFes?` 페스 ${applied.minFes}명 이상 조건은 유지합니다.`:''}`
-    :`필수 ${applied.required.length}명 · 선호 ${applied.preferred.length}명 · ${applied.minFes?`페스 ${applied.minFes}명 이상 · `:''}${accountMoney(applied.min)} ~ ${Number.isFinite(applied.max)?accountMoney(applied.max):'상한 없음'}`;
+    :sharedNumber!==null?'공유받은 계정 한 개를 표시합니다.':`필수 ${applied.required.length}명 · 선호 ${applied.preferred.length}명 · ${applied.minFes?`페스 ${applied.minFes}명 이상 · `:''}${accountMoney(applied.min)} ~ ${Number.isFinite(applied.max)?accountMoney(applied.max):'상한 없음'}`;
   if(!count){$('account-grid').innerHTML=`<div class="empty-state"><h3>현재 조건에 맞는 계정이 없어요.</h3><p>예산을 넓히거나 ${applied.minFes?'페스 보유 수·필수 학생 조건을 낮춰보세요.':'꼭 포함할 학생을 줄여보세요.'}</p>${applied.required.length?`<button id="relax-button">같은 예산${applied.minFes?'·페스 조건':''}에서 가까운 조합 보기 →</button>`:''}</div>`;$('pagination').innerHTML='';$('pagination-top').innerHTML='';$('pagination-top').hidden=true;$('relax-button')?.addEventListener('click',()=>search({relax:true}));favorites.refreshButtons();return;}
   $('account-grid').innerHTML=current.slice((page-1)*pageSize,page*pageSize).map(accountCard).join('');
   const pages=Math.ceil(count/pageSize);let buttons=[];for(let n=1;n<=pages;n++){if(n===1||n===pages||Math.abs(n-page)<=2)buttons.push(`<button data-page="${n}" class="${n===page?'active':''}" ${n===page?'aria-current="page"':''}>${n}</button>`);else if(n===page-3||n===page+3)buttons.push('<span>…</span>');}$('pagination').innerHTML=pages>1?`<button data-page="${page-1}" ${page===1?'disabled':''} aria-label="이전 페이지">‹</button>${buttons.join('')}<button data-page="${page+1}" ${page===pages?'disabled':''} aria-label="다음 페이지">›</button>`:'';
@@ -211,6 +213,14 @@ async function copyAccount(num,consultUrl){
   }
 }
 
+let lastConsultClick={key:null,time:0};
+function recordConsultation(link){
+  if(location.protocol!=='https:')return;
+  const account=data.accounts.find(a=>a.num===link.dataset.consult);if(!account||!applied)return;
+  const band=value=>Math.floor(Math.min(value,999)/5)*5;const condition={event:'consult',channel:document.body.classList.contains('idfarm-body')?'idfarm':'website',required:applied.required,preferred:applied.preferred,minBand:band(applied.min),maxBand:Number.isFinite(applied.max)?band(applied.max):null,minFes:applied.minFes,accountNum:account.num,priceWon:Math.round(account.price*10000)};
+  const key=JSON.stringify(condition);if(lastConsultClick.key===key&&Date.now()-lastConsultClick.time<5000)return;lastConsultClick={key,time:Date.now()};
+  void fetch('/.netlify/functions/search-stats',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(condition),keepalive:true,referrerPolicy:'no-referrer'}).catch(()=>{});
+}
 async function openConsultation(link){
   if(consultationPending) return;
   consultationPending=true;
@@ -235,9 +245,10 @@ function showInfo(title,html){$('info-title').textContent=title;$('info-content'
 document.addEventListener('click',event=>{
   const consult=event.target.closest('a[data-consult]');
   if(consult){
+    recordConsultation(consult);
     if(event.button===0&&!event.ctrlKey&&!event.metaKey&&!event.shiftKey&&!event.altKey){
       event.preventDefault();
-      openConsultation(consult);
+      if(document.body.classList.contains('idfarm-body')){void copyAccount(consult.dataset.consult);$('consultation')?.scrollIntoView({behavior:'smooth'});}else openConsultation(consult);
     }
     return;
   }
@@ -245,7 +256,9 @@ document.addEventListener('click',event=>{
   if(!button)return;
   if(button.hasAttribute('data-open-roster'))setRosterExpanded(button,true);
   if(button.hasAttribute('data-close-roster'))setRosterExpanded(button.closest('.account-card').querySelector('[data-open-roster]'),false);
-  const {student,remove,copy,close,page:targetPage,budget}=button.dataset;
+  const {student,remove,copy,close,page:targetPage,budget,budgetMin,shareAccount,imageAccount}=button.dataset;
+  if(shareAccount){void copyShareLink(shareAccount);return;}
+  if(imageAccount){void saveAccountImage(imageAccount,button);return;}
   if(student)selectStudent(student);
   if(remove){
     selected.required=selected.required.filter(id=>id!==remove);
@@ -262,7 +275,7 @@ document.addEventListener('click',event=>{
     $('results').scrollIntoView({behavior:'smooth'});
   }
   if(budget){
-    $('min-price').value=0;
+    $('min-price').value=budgetMin??0;
     $('max-price').value=budget;
     markFiltersChanged();
   }
@@ -275,9 +288,13 @@ $('grade-tabs').addEventListener('click',e=>{const b=e.target.closest('button');
 for(const type of ['required','preferred'])$(`mode-${type}`).addEventListener('click',()=>{mode=type;for(const t of ['required','preferred']){$(`mode-${t}`).classList.toggle('active',t===type);$(`mode-${t}`).setAttribute('aria-pressed',String(t===type));}});
 $('find-button').addEventListener('click',()=>search({scroll:true,record:true}));
 $('dock-find-button').addEventListener('click',()=>$('find-button').click());
-$('sort-order').addEventListener('change',()=>{if(!applied)return;applied.sort=$('sort-order').value;current=filterAccounts(data.accounts,{...applied,relaxed},data.students);page=1;renderAccounts();});
+$('sort-order').addEventListener('change',()=>{if(!applied||sharedNumber!==null)return;applied.sort=$('sort-order').value;current=filterAccounts(data.accounts,{...applied,relaxed},data.students);page=1;renderAccounts();});
 $('reset-filters').addEventListener('click',()=>{selected={required:[],preferred:[]};$('min-price').value=0;$('max-price').value='';$('min-fes').value='0';renderSelected();renderStudents();search();});
 document.addEventListener('keydown',e=>{if(e.key==='/'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();$('student-search').focus();}});
+function clearSharedAccount(){sharedNumber=null;const url=new URL(location.href);if(url.searchParams.has('account')){url.searchParams.delete('account');history.replaceState(null,'',url.href);}}
+$('show-all-accounts').addEventListener('click',()=>{$('reset-filters').click();$('results').scrollIntoView({behavior:'instant',block:'start'});});
+async function copyShareLink(number){const url=accountShareUrl(location.href,number);try{await navigator.clipboard.writeText(url);toast('계정 링크가 복사되었습니다.');}catch{showInfo('계정 링크 복사',`<p>아래 주소를 복사해 주세요.</p><input style="width:100%" readonly aria-label="계정 링크" value="${esc(url)}">`);}}
+async function saveAccountImage(number,button){const account=data.accounts.find(a=>a.num===number);if(!account)return;button.disabled=true;toast('전체 학생을 이미지로 만들고 있습니다.',10000);try{const blob=await createAccountImage(account,data.students,{idfarm:document.body.classList.contains('idfarm-body')});const url=URL.createObjectURL(blob);showInfo('계정 이미지 저장',`<p>전체 학생을 포함했습니다. 휴대폰에서는 이미지를 길게 눌러 저장할 수도 있습니다.</p><a class="primary" id="save-account-png" href="${url}" download="${esc(number)}.png">PNG 저장</a><img class="account-image-preview" src="${url}" alt="${esc(number)} 전체 학생">`);$('save-account-png').click();$('info-dialog').addEventListener('close',()=>URL.revokeObjectURL(url),{once:true});toast('전체 학생 이미지가 준비되었습니다.');}catch(error){toast(error.message);}finally{button.disabled=false;}}
 function showPriceNotice(){
   const comparison=data.priceComparison;
   const hours=contactHoursState();
@@ -322,7 +339,8 @@ async function init(){try{const r=await fetch('./catalog.json');if(!r.ok)throw n
   $('min-price').value='0';
   $('max-price').value='';
   $('sort-order').value='recommended';
-  favorites.init();renderFesOptions();renderStudents();renderSelected();search();showPriceNotice();
+  sharedNumber=sharedAccountId(location.href);
+  favorites.init();renderFesOptions();renderStudents();renderSelected();search({keepShared:true});if(sharedNumber===null)showPriceNotice();else requestAnimationFrame(()=>$('results').scrollIntoView({behavior:'instant',block:'start'}));
   const observer=new IntersectionObserver(updateSearchDock);
   observer.observe($('finder'));observer.observe($('find-button'));
   new MutationObserver(updateSearchDock).observe(document.body,{subtree:true,attributes:true,attributeFilter:['hidden','open']});

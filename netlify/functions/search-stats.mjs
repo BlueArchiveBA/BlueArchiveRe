@@ -1,3 +1,4 @@
+import {consultationCondition,consultationSummary} from '../lib/consult-summary.mjs';
 import { timingSafeEqual } from 'node:crypto';
 import { getStore } from '@netlify/blobs';
 
@@ -27,9 +28,9 @@ function normalizeCondition(data) {
   return [data.channel, required, preferred, data.minBand, data.maxBand, minFes];
 }
 
-async function countSearch(store, today, condition) {
+async function countSearch(store, today, condition, prefix='') {
   const dayNumber = Date.parse(today) / DAY_MS;
-  const key = datedBucket(today);
+  const key = prefix+datedBucket(today);
   const match = JSON.stringify(condition);
   for (let attempt = 0; attempt < 6; attempt++) {
     const entry = await store.getWithMetadata(key, { type: 'json' });
@@ -140,15 +141,15 @@ export async function handleSearchStats(request, token, openStore, now = new Dat
         !/^application\/json(?:;|$)/i.test(request.headers.get('content-type') ?? '')) {
       return json({ error: 'invalid_request' }, 403);
     }
-    let condition;
+    let condition,event;
     try {
       const body = await request.text();
-      if (body.length <= 10_000) condition = normalizeCondition(JSON.parse(body));
+      if (body.length <= 10_000) {const data=JSON.parse(body);event=data.event??'search';condition=normalizeCondition(data);if(event==='consult'&&condition)condition=consultationCondition(condition,data);else if(event!=='search')condition=null;}
     } catch {
       return json({ error: 'invalid_condition' }, 400);
     }
     if (!condition) return json({ error: 'invalid_condition' }, 400);
-    if (!await countSearch(openStore(), today, condition)) {
+    if (!await countSearch(openStore(), today, condition,event==='consult'?'consult-':'')) {
       return json({ error: 'temporarily_unavailable' }, 503);
     }
     return new Response(null, { status: 204, headers: { 'Cache-Control': 'no-store' } });
@@ -166,7 +167,9 @@ export async function handleSearchStats(request, token, openStore, now = new Dat
     if (detail !== null && detail !== 'full') return json({error:'invalid_detail'},400);
     if (detail === 'full') filter.detail = detail;
     const range = filter.days ? { days: filter.days } : { period: filter.period };
-    return json({ today, ...range, channel: filter.channel, ...await readSummary(openStore(), today, filter) });
+    const store=openStore();
+    return json({ today, ...range, channel: filter.channel, ...await readSummary(store, today, filter),
+      ...(filter.detail==='full'||url.searchParams.get('includeConsult')==='1'?{consultations:await consultationSummary(store,today,filter)}:{}) });
   }
   return json({ error: 'method_not_allowed' }, 405);
 }
